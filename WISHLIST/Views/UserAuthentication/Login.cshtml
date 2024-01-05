@@ -1,0 +1,52 @@
+﻿@model WISHLIST.Models.DTO.LoginModel
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+
+<body class="form-body">
+    <div class="login-form-container">
+        <div class="action">LOGIN</div>
+        <form asp-controller="UserAuthentication" asp-action="Login">
+            <div class="login-form-input">
+                <div class="login-divide">
+                    <div class="input-container">
+                        <label class="label" asp-for="Username">Username</label>
+                        <input class="input" type="text" asp-for="Username" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="Username"></span>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label class="label" asp-for="Password">Password</label>
+                        <input class="input" type="password" asp-for="Password" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="Password"></span>
+                        </div>
+                    </div>
+                    @{
+                        if (TempData["msg"] != null)
+                        {
+                            <div class="span-message">
+                                <span>@TempData["msg"]</span>
+                            </div>
+                            TempData["msg"] = null;
+                        }
+                    }
+                </div>
+
+                <div class="button-container">
+                    <input class="button" type="submit" value="LOGIN" />
+                </div>
+
+
+                <a class="form-redirect" href="/UserAuthentication/Registration">REGISTRATION</a>
+
+            </div>
+        </form>
+    </div>
+</body>

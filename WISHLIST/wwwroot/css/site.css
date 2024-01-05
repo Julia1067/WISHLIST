@@ -1,22 +1,164 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    border: 0;
+    /*background: black;*/
+    color: #909090;
+    font-family: Tahoma;
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    padding: 0;
+    background: black;
+}
+
+.form-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a {
+    color: #909090;
+    text-decoration: none;
+}
+
+header {
+    height: 10em;
+}
+
+main {
+    margin: 0;
+    padding: 0;
+}
+
+.login-form-container {
+    display: grid;
+    background: #141414;
+    width: 25em;
+    height: 35em;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1em;
+}
+
+.action {
+    text-align: center;
+    margin: 1em;
+    font-family:Tahoma;
+    font-size: 30px
+}
+
+.login-form-input {
+    margin-bottom: 2em;
+    display: grid;
+    justify-content: center;
+}
+
+.input-container {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: grid;
+    width: 15em;
+}
+
+label {
+    margin-bottom: 0.5em;
+    font-size: 18px
+}
+
+.input {
+    background: transparent;
+    border-bottom: 1px solid #d49dff;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-family: Tahoma;
+    font-size: 16px;
+    transition: linear 0.1s;
+}
+
+.input:hover, .input:focus {
+    border-bottom: 1px solid #68009f;
+}
+
+.button {
+    width: 9em;
+    height: 3em;
+    border-radius: 0.5em;
+    background: #d49dff;
+    color: #68009f;
+    font: bold 14px Tahoma;
+    transition: linear 0.2s;
+    margin-top: 2em
+}
+
+.button:hover {
+    background: transparent;
+    border: 2px solid #909090;
+    color: #909090;
+}
+
+.button-container {
+    margin-top: 1em;
+    margin-bottom: 2em;
+    display: grid;
+    justify-content: center;
+}
+
+.registration-form-container {
+    display: grid;
+    background: #141414;
+    width: 50em;
+    height: 45em;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1em;
+    
+}
+
+.form-redirect {
+    text-align: center;
+    font-size: 14px;
+}
+
+.registration-input-container{
+    display: flex;
+}
+
+.divide-container1 {
+    display: grid;
+    border-right: 1px solid #909090;
+    padding-right: 3em;
+}
+
+.divide-container2 {
+    display: grid;
+    padding-left: 3em;
+}
+
+.registration-form-input {
+    margin-bottom: 2em;
+    display: grid;
+    justify-content: center;
 }

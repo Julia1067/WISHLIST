@@ -1,0 +1,87 @@
+﻿@model WISHLIST.Models.DTO.RegistrationModel
+@{
+    Layout = null;
+}
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<body class="form-body">
+    <div class="registration-form-container">
+        <div class="action">REGISTRATION</div>
+        <form asp-controller="UserAuthentication" asp-action="Registration">
+            <div class="registration-form-input">
+                <div class="registration-input-container">
+                    <div class="divide-container1">
+                        <div class="input-container">
+                            <label class="label" asp-for="Surname">Surname</label>
+                            <input class="input" type="text" asp-for="Surname" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="Surname"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-container">
+                            <label class="label" asp-for="Name">Name</label>
+                            <input class="input" type="text" asp-for="Name" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="Name"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-container">
+                            <label class="label" asp-for="Username">Username</label>
+                            <input class="input" type="text" asp-for="Username" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="Username"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divide-container2">
+                        <div class="input-container">
+                            <label class="label" class="label" asp-for="Email">Email</label>
+                            <input class="input" type="text" asp-for="Email" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="Email"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-container">
+                            <label class="label" asp-for="Password">Password</label>
+                            <input class="input" type="password" asp-for="Password" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="Password"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-container">
+                            <label class="label" asp-for="PasswordConfirm">PasswordConfirm</label>
+                            <input class="input" type="password" asp-for="PasswordConfirm" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="PasswordConfirm"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @{
+                    if (TempData["msg"] != null)
+                    {
+                        <div class="span-message">
+                            <span>@TempData["msg"]</span>
+                        </div>
+                    }
+                }
+                <div class="button-container">
+                    <input class="button" type="submit" value="REGISTER" />
+                </div>
+
+                <a class="form-redirect" href="/UserAuthentication/Login">LOGIN</a>
+            </div>
+        </form>
+    </div>
+</body>
