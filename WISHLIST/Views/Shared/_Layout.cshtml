@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,19 +6,34 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WISHLIST.styles.css" asp-append-version="true" />
+    <script src="https://kit.fontawesome.com/097a8526d1.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        
-    </header>
-        <main role="main">
-            @RenderBody()
-        </main>
 
-    
+    <main>
+        <input type="checkbox" id="check">
+        <label for="check">
+            <i class="fas fa-bars" id="btn"></i>
+            <i class="fas fa-times" id="cancel"></i>
+        </label>
+        <div class="sidebar">
+            <h1>MENU</h1>
+            <ul>
+                <li><a href="#"><i class="fas fa-qrcode"></i>Dashboard</a></li>
+                <li><a href="/User/UserInfoChange?username=@User.Identity.Name"><i class="fa-solid fa-pen-to-square"></i>Change personal info</a></li>
+                <li><a href="#"><i class="fas fa-stream"></i>Overview</a></li>
+                <li><a href="#"><i class="fas fa-calendar-week"></i>Events</a></li>
+                <li><a href="#"><i class="far fa-question-circle"></i>About</a></li>
+                <li><a href="#"><i class="fas fa-sliders-h"></i>Service</a></li>
+                <li><a href="#"><i class="far fa-envelope"></i>Contact</a></li>
+            </ul>
+        </div>
+        @RenderBody()
+    </main>
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>

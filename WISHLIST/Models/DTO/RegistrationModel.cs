@@ -27,5 +27,7 @@ namespace WISHLIST.Models.DTO
         public string PasswordConfirm { get; set; }
 
         public string Role = "user";
+
+        public DateTime Birthday = DateTime.Now;
     }
 }

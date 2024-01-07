@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -14,15 +15,19 @@ namespace WISHLIST.Repositories.Implementation
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly DatabaseContext _dbContext;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
 
         public UserAuthenticationService(SignInManager<ApplicationUser> signInManager, 
                                          UserManager<ApplicationUser> userManager, 
                                          DatabaseContext dbContext, 
-                                         RoleManager<IdentityRole> roleManager)
+                                         RoleManager<IdentityRole> roleManager,
+                                         IWebHostEnvironment webHostEnvironment)
         {
-            this._signInManager = signInManager;
+            _signInManager = signInManager;
             _userManager = userManager;
             _dbContext = dbContext;
+            _webHostEnvironment = webHostEnvironment;
             _roleManager = roleManager;
         }
 
@@ -81,20 +86,32 @@ namespace WISHLIST.Repositories.Implementation
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == model.Username);
 
-            if(user != null)
+            var userEmail = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user != null)
             {
-                status.StatusMessage = "User already exists";
+                status.StatusMessage = "User with this username already exists";
                 status.StatusValue = false;
 
                 return status;
             }
+
+            if (userEmail != null)
+            {
+                status.StatusMessage = "User with this email already exists";
+                status.StatusValue = false;
+
+                return status;
+            }
+
 
             user = new()
             {
                 Name = model.Name,
                 Email = model.Email,
                 Surname = model.Surname,
-                UserName = model.Username
+                UserName = model.Username,
+                Birthday = model.Birthday,
+                ImageFilePath = "images\\завантаження.png"
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

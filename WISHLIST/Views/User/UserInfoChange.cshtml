@@ -1,0 +1,82 @@
+﻿@model WISHLIST.Models.DTO.UserInfoChangeModel;
+@{
+}
+
+<div class="container">
+    <div class="row">
+        <br />
+        <div class="col-lg-12">
+            <form method="post" asp-controller="User" asp-action="SaveFile" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="file" id="file" name="file" />
+                </div>
+
+                @{
+                    if (TempData["msg"] != null)
+                    {
+                        <div class="span-message">
+                            <span>@TempData["msg"]</span>
+                        </div>
+                        TempData["msg"] = String.Empty;
+                    }
+                }
+
+                <div class="form-group">
+                    <button type="submit">Save File</button>
+                </div>
+            </form>
+            <form method="post" asp-controller="User" asp-action="UserInfoChange">
+                <input type="hidden" value="@Model.Id" asp-for="Id" />
+                <div class="registration-form-input">
+                    <div class="registration-input-container">
+                        <div class="divide-container1">
+                            <div class="input-container">
+                                <label class="label" asp-for="Surname">Surname</label>
+                                <input class="input" type="text" asp-for="Surname" />
+
+                                <div class="span-message">
+                                    <span asp-validation-for="Surname"></span>
+                                </div>
+                            </div>
+
+                            <div class="input-container">
+                                <label class="label" asp-for="Name">Name</label>
+                                <input class="input" type="text" asp-for="Name" />
+
+                                <div class="span-message">
+                                    <span asp-validation-for="Name"></span>
+                                </div>
+                            </div>
+
+                        <div class="divide-container2">
+                            <div class="input-container">
+                                    <label class="label" asp-for="Birthday">Birthday</label>
+                                    <input class="input" type="date" asp-for="Birthday" />
+
+                                <div class="span-message">
+                                        <span asp-validation-for="Birthday"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    @{
+                        if (TempData["msg"] != null)
+                        {
+                            <div class="span-message">
+                                <span>@TempData["msg"]</span>
+                            </div>
+                            TempData["msg"] = null;
+                        }
+                    }
+                    <div class="button-container">
+                        <input class="button" type="submit" value="REGISTER" />
+                    </div>
+
+                    <a class="form-redirect" href="/UserAuthentication/Login">LOGIN</a>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<DatabaseContext>(options => options
+builder.Services
+    .AddDbContext<DatabaseContext>(options => options
         .UseSqlServer(builder.Configuration
             .GetConnectionString("conn")));
 
@@ -19,7 +20,12 @@ builder.Services
     .AddDefaultTokenProviders();
 
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true;
+});
 
 var app = builder.Build();
 

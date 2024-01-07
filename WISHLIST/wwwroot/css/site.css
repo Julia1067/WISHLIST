@@ -1,31 +1,14 @@
-html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
 * {
     margin: 0;
     padding: 0;
     outline: 0;
     border: 0;
-    /*background: black;*/
     color: #909090;
     font-family: Tahoma;
+    list-style: none;
+    text-decoration: none;
 }
+
 
 body {
     margin: 0;
@@ -44,13 +27,11 @@ a {
     text-decoration: none;
 }
 
-header {
-    height: 10em;
-}
 
 main {
     margin: 0;
     padding: 0;
+    display: flex;
 }
 
 .login-form-container {
@@ -83,7 +64,7 @@ main {
     width: 15em;
 }
 
-label {
+.label {
     margin-bottom: 0.5em;
     font-size: 18px
 }
@@ -161,4 +142,87 @@ label {
     margin-bottom: 2em;
     display: grid;
     justify-content: center;
+}
+
+.sidebar {
+    position: fixed;
+    left: -400px;
+    width: 400px;
+    height: 100%;
+    background: #250039;
+    transition: all 0.5s;
+}
+
+h1{
+    text-align: center;
+    font-family: Tahoma;
+    font: 40px Tahoma;
+    margin: 0.5em;
+}
+
+.sidebar ul a {
+    display: block;
+    height: 4em;
+    width: 100%;
+    line-height: 65px;
+    font-size: 20px;
+    color: #909090;
+    padding-left: 40px;
+    border-top: 1px solid rgba(255, 255, 255,0.1);
+    border-bottom: 1px solid black;
+    transition: 0.2s;
+}
+ul{
+    padding: 0;
+}
+ul li:hover a {
+    padding-left: 50px;
+    background: #68009f;
+}
+
+.sidebar ul a i {
+    margin-right: 16px;
+}
+
+#check {
+    display: none;
+}
+
+label #btn, label #cancel {
+    position: absolute;
+    cursor: pointer;
+    background: #250039;
+    border-radius: 3px;
+}
+
+label #btn {
+    left: 40px;
+    top: 25px;
+    font-size: 35px;
+    color: #909090;
+    padding: 6px 12px;
+    transition: all 0.5s;
+}
+
+label #cancel {
+    z-index: 1111;
+    left: -350px;
+    font-size: 30px;
+    color: #68009f;
+    padding: 4px 9px;
+    transition: all 0.5s ease;
+}
+
+#check:checked ~ .sidebar {
+    left: 0;
+}
+
+#check:checked ~ label #btn {
+    left: 400px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#check:checked ~ label #cancel {
+    left: 350px;
 }

@@ -11,5 +11,7 @@ namespace WISHLIST.Models.Domain
 
         [Column(TypeName = "date")]
         public DateTime Birthday { get; set; }
+
+        public string ImageFilePath {  get; set; }
     }
 }
