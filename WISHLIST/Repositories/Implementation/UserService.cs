@@ -50,17 +50,27 @@ namespace WISHLIST.Repositories.Implementation
 
         }
 
+        public async Task<string> GetCurrentImage(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            return user.ImageFilePath; 
+        }
+
         public async Task<StatusModel> SaveFile(string username, IFormFile file)
         {
+            var status = new StatusModel();
             if (file == null || file.Length == 0)
             {
-                return null;
+                status.StatusValue = false;
+                status.StatusMessage = "Please choose one image file";
+                return status;
             }
             string extension = Path.GetExtension(file.FileName);
             
             string[] extensions = [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png"];
 
-            var status = new StatusModel();
+            
 
             bool result = false;
             foreach ( var item in extensions)
@@ -127,5 +137,7 @@ namespace WISHLIST.Repositories.Implementation
             return status;
 
         }
+
+
     }
 }

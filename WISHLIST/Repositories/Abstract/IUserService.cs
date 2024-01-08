@@ -8,5 +8,7 @@ namespace WISHLIST.Repositories.Abstract
 
         public Task<StatusModel> SaveFile(string username, IFormFile File);
 
+        public Task<string> GetCurrentImage(string username);
+
     }
 }

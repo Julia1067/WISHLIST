@@ -226,3 +226,24 @@ label #cancel {
 #check:checked ~ label #cancel {
     left: 350px;
 }
+
+.file-form{
+    margin-top: 5em;
+    margin-bottom: 4em;
+}
+
+.file-form-container{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-form-input {
+    background: #141414;
+    border-radius: 1em;
+    width: 30em;
+    height: 30em;
+    display: grid;
+    justify-content: center;
+    padding-top: 30px
+}

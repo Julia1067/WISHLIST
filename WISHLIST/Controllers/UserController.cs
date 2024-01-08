@@ -21,8 +21,18 @@ namespace WISHLIST.Controllers
         }
 
         [HttpGet]
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
+            //var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            //var correctedPath = $"/images/{user.ImageFilePath}";
+
+            //var model = new UserInfoChangeModel();
+
+            //model.Surname = user.Surname;
+            //model.Name = user.Name;
+            //model.ImageFilePath = correctedPath;
+
             return View();
         }
 

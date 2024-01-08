@@ -4,7 +4,6 @@
 
 }
 <style>
-    /* Style for the visible button */
     .custom-file-input {
         width: 150px;
         height: 150px;
@@ -16,95 +15,79 @@
         border: 0;
     }
 
-    /* Hide the actual file input */
     .hidden-file-input {
         display: none;
     }
 
-    .form-group {
-    }
-
-    /* input[type="file"]::file-selector-button {
-            width: 200px;
-            height: 200px;
-            border-radius: 100px;
-            background: url('C:\\Users\\Admin\\Documents\\GitHub\\WISHLIST\\WISHLIST\\wwwroot\\images\\20240108011842_293598789.jpg');
-        } */
 </style>
 
 <body class="form-body">
     <div class="container">
         <form class="file-form" method="post" asp-controller="User" asp-action="SaveFile" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="file" class="custom-file-input">
-                    <!-- Actual file input (hidden) -->
-                    <input type="file" id="file" name="file" class="hidden-file-input" />
-                </label>
-            </div>
+            <div class="file-form-container">
+                <div class="form-group">
+                    <label for="file" class="custom-file-input">
+                        <input type="file" id="file" name="file" class="hidden-file-input" />
+                    </label>
+                </div>
 
-            @{
-                if (TempData["msg"] != null)
-                {
-                    <div class="span-message">
-                        <span>@TempData["msg"]</span>
-                    </div>
-                    TempData["msg"] = String.Empty;
+                @{
+                    if (TempData["msg"] != null)
+                    {
+                        <div class="span-message">
+                            <span>@TempData["msg"]</span>
+                        </div>
+                        TempData["msg"] = String.Empty;
+                    }
                 }
-            }
 
-            <div class="button-container">
-                <input class="button" type="submit" value="Save Image" />
+                <div class="button-container">
+                    <input class="button" type="submit" value="Save Image" />
+                </div>
             </div>
         </form>
         <form method="post" asp-controller="User" asp-action="UserInfoChange">
             <input type="hidden" value="@Model.Id" asp-for="Id" />
-            <div class="registration-form-input">
-                <div class="registration-input-container">
-                    <div class="divide-container1">
-                        <div class="input-container">
-                            <label class="label" asp-for="Surname">Surname</label>
-                            <input class="input" type="text" asp-for="Surname" />
+            <div class="update-form-input">
+                <div class="update-input-container">
+                    <div class="input-container">
+                        <label class="label" asp-for="Surname">Surname</label>
+                        <input class="input" type="text" asp-for="Surname" />
 
-                            <div class="span-message">
-                                <span asp-validation-for="Surname"></span>
-                            </div>
-                        </div>
-
-                        <div class="input-container">
-                            <label class="label" asp-for="Name">Name</label>
-                            <input class="input" type="text" asp-for="Name" />
-
-                            <div class="span-message">
-                                <span asp-validation-for="Name"></span>
-                            </div>
-                        </div>
-
-                        <div class="divide-container2">
-                            <div class="input-container">
-                                <label class="label" asp-for="Birthday">Birthday</label>
-                                <input class="input" type="date" asp-for="Birthday" />
-
-                                <div class="span-message">
-                                    <span asp-validation-for="Birthday"></span>
-                                </div>
-                            </div>
-
+                        <div class="span-message">
+                            <span asp-validation-for="Surname"></span>
                         </div>
                     </div>
-                    @{
-                        if (TempData["msg"] != null)
-                        {
-                            <div class="span-message">
-                                <span>@TempData["msg"]</span>
-                            </div>
-                            TempData["msg"] = null;
-                        }
+
+                    <div class="input-container">
+                        <label class="label" asp-for="Name">Name</label>
+                        <input class="input" type="text" asp-for="Name" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="Name"></span>
+                        </div>
+                    </div>
+
+                    <div class="input-container">
+                        <label class="label" asp-for="Birthday">Birthday</label>
+                        <input class="input" type="date" asp-for="Birthday" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="Birthday"></span>
+                        </div>
+                    </div>
+                </div>
+                @{
+                    if (TempData["msg"] != null)
+                    {
+                        <div class="span-message">
+                            <span>@TempData["msg"]</span>
+                        </div>
+                        TempData["msg"] = null;
                     }
-                    <div class="button-container">
-                        <input class="button" type="submit" value="REGISTER" />
-                    </div>
-
-                    <a class="form-redirect" href="/UserAuthentication/Login">LOGIN</a>
+                }
+                <div class="button-container">
+                    <input class="button" type="submit" value="UPDATE" />
                 </div>
             </div>
         </form>
