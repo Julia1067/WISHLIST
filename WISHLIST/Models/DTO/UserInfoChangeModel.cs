@@ -15,6 +15,6 @@ namespace WISHLIST.Models.DTO
         [Required]
         public DateTime Birthday { get; set; }
 
-
+        public string ImageFilePath { get; set; }
     }
 }

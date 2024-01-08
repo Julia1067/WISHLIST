@@ -111,7 +111,7 @@ namespace WISHLIST.Repositories.Implementation
                 Surname = model.Surname,
                 UserName = model.Username,
                 Birthday = model.Birthday,
-                ImageFilePath = "images\\завантаження.png"
+                ImageFilePath = "завантаження.png"
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

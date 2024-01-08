@@ -13,7 +13,8 @@ namespace WISHLIST.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(IUserService userService, UserManager<ApplicationUser> userManager)
+        public UserController(IUserService userService,
+                              UserManager<ApplicationUser> userManager)
         {
             _userService = userService;
             _userManager = userManager;
@@ -28,7 +29,10 @@ namespace WISHLIST.Controllers
         [HttpGet]
         public async Task<IActionResult> UserInfoChange(string username)
         {
+            
             var user = await _userManager.FindByNameAsync(username);
+
+            var correctedPath = $"/images/{user.ImageFilePath}";
 
             var model = new UserInfoChangeModel();
 
@@ -36,6 +40,7 @@ namespace WISHLIST.Controllers
             model.Name = user.Name;
             model.Birthday = user.Birthday;
             model.Id = user.Id;
+            model.ImageFilePath = correctedPath;
 
             return View(model);
         }

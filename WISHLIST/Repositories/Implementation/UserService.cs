@@ -52,6 +52,10 @@ namespace WISHLIST.Repositories.Implementation
 
         public async Task<StatusModel> SaveFile(string username, IFormFile file)
         {
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
             string extension = Path.GetExtension(file.FileName);
             
             string[] extensions = [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png"];
@@ -70,17 +74,12 @@ namespace WISHLIST.Repositories.Implementation
 
             if (result)
             {
-                if (file == null || file.Length == 0)
-                {
-                    return null;
-                }
-
                 if (file != null)
                 {
                     Random rand = new Random();
 
-                    string originalName = file.Name; //original name initialization
-                    string FileName = $"{DateTime.Now:yyyyMMddHHmmss}_{originalName}_{rand.Next(1000000, 999999999)}";
+                    string originalName = file.FileName; //original name initialization
+                    string FileName = $"{DateTime.Now:yyyyMMddHHmmss}_{rand.Next(1000000, 999999999)}{extension}";
                     //unique file name creation
 
                     var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", FileName);
@@ -94,14 +93,14 @@ namespace WISHLIST.Repositories.Implementation
                     var user = await _userManager.FindByNameAsync(username); //user searching 
                                                                              //in database in AspNetUsers table
 
-                    if (user.ImageFilePath != "images\\завантаження.png")
+                    if (user.ImageFilePath != "завантаження.png")
                     {
                         string wwwrootPath = _environment.WebRootPath;
-                        path = Path.Combine(wwwrootPath, user.ImageFilePath);
+                        path = Path.Combine(wwwrootPath, "images", user.ImageFilePath);
                         File.Delete(path);
                     }
 
-                    user.ImageFilePath = $"images\\{FileName}"; //adding new path to the database
+                    user.ImageFilePath = FileName; //adding new path to the database
 
                     var queryResult = await _userManager.UpdateAsync(user);
 
@@ -124,7 +123,7 @@ namespace WISHLIST.Repositories.Implementation
             }
 
             status.StatusValue = false;
-            status.StatusMessage = "File extensions must be .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png";
+            status.StatusMessage = "File extension must be .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png";
             return status;
 
         }

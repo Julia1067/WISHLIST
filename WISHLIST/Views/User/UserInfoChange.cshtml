@@ -1,60 +1,91 @@
 ﻿@model WISHLIST.Models.DTO.UserInfoChangeModel;
 @{
+    var path = Model.ImageFilePath;
+
 }
+<style>
+    /* Style for the visible button */
+    .custom-file-input {
+        width: 150px;
+        height: 150px;
+        border-radius: 75px;
+        background: url('@Html.Raw(path)') no-repeat center center;
+        background-color: black;
+        background-size: cover;
+        cursor: pointer;
+        border: 0;
+    }
 
-<div class="container">
-    <div class="row">
-        <br />
-        <div class="col-lg-12">
-            <form method="post" asp-controller="User" asp-action="SaveFile" enctype="multipart/form-data">
-                <div class="form-group">
-                    <input type="file" id="file" name="file" />
-                </div>
+    /* Hide the actual file input */
+    .hidden-file-input {
+        display: none;
+    }
 
-                @{
-                    if (TempData["msg"] != null)
-                    {
-                        <div class="span-message">
-                            <span>@TempData["msg"]</span>
-                        </div>
-                        TempData["msg"] = String.Empty;
-                    }
+    .form-group {
+    }
+
+    /* input[type="file"]::file-selector-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 100px;
+            background: url('C:\\Users\\Admin\\Documents\\GitHub\\WISHLIST\\WISHLIST\\wwwroot\\images\\20240108011842_293598789.jpg');
+        } */
+</style>
+
+<body class="form-body">
+    <div class="container">
+        <form class="file-form" method="post" asp-controller="User" asp-action="SaveFile" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file" class="custom-file-input">
+                    <!-- Actual file input (hidden) -->
+                    <input type="file" id="file" name="file" class="hidden-file-input" />
+                </label>
+            </div>
+
+            @{
+                if (TempData["msg"] != null)
+                {
+                    <div class="span-message">
+                        <span>@TempData["msg"]</span>
+                    </div>
+                    TempData["msg"] = String.Empty;
                 }
+            }
 
-                <div class="form-group">
-                    <button type="submit">Save File</button>
-                </div>
-            </form>
-            <form method="post" asp-controller="User" asp-action="UserInfoChange">
-                <input type="hidden" value="@Model.Id" asp-for="Id" />
-                <div class="registration-form-input">
-                    <div class="registration-input-container">
-                        <div class="divide-container1">
-                            <div class="input-container">
-                                <label class="label" asp-for="Surname">Surname</label>
-                                <input class="input" type="text" asp-for="Surname" />
+            <div class="button-container">
+                <input class="button" type="submit" value="Save Image" />
+            </div>
+        </form>
+        <form method="post" asp-controller="User" asp-action="UserInfoChange">
+            <input type="hidden" value="@Model.Id" asp-for="Id" />
+            <div class="registration-form-input">
+                <div class="registration-input-container">
+                    <div class="divide-container1">
+                        <div class="input-container">
+                            <label class="label" asp-for="Surname">Surname</label>
+                            <input class="input" type="text" asp-for="Surname" />
 
-                                <div class="span-message">
-                                    <span asp-validation-for="Surname"></span>
-                                </div>
+                            <div class="span-message">
+                                <span asp-validation-for="Surname"></span>
                             </div>
+                        </div>
 
-                            <div class="input-container">
-                                <label class="label" asp-for="Name">Name</label>
-                                <input class="input" type="text" asp-for="Name" />
+                        <div class="input-container">
+                            <label class="label" asp-for="Name">Name</label>
+                            <input class="input" type="text" asp-for="Name" />
 
-                                <div class="span-message">
-                                    <span asp-validation-for="Name"></span>
-                                </div>
+                            <div class="span-message">
+                                <span asp-validation-for="Name"></span>
                             </div>
+                        </div>
 
                         <div class="divide-container2">
                             <div class="input-container">
-                                    <label class="label" asp-for="Birthday">Birthday</label>
-                                    <input class="input" type="date" asp-for="Birthday" />
+                                <label class="label" asp-for="Birthday">Birthday</label>
+                                <input class="input" type="date" asp-for="Birthday" />
 
                                 <div class="span-message">
-                                        <span asp-validation-for="Birthday"></span>
+                                    <span asp-validation-for="Birthday"></span>
                                 </div>
                             </div>
 
@@ -75,8 +106,7 @@
 
                     <a class="form-redirect" href="/UserAuthentication/Login">LOGIN</a>
                 </div>
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
-</div>
+</body>
