@@ -15,25 +15,54 @@ namespace WISHLIST.Repositories.Implementation
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly DatabaseContext _dbContext;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
 
         public UserAuthenticationService(SignInManager<ApplicationUser> signInManager, 
                                          UserManager<ApplicationUser> userManager, 
                                          DatabaseContext dbContext, 
-                                         RoleManager<IdentityRole> roleManager,
-                                         IWebHostEnvironment webHostEnvironment)
+                                         RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _dbContext = dbContext;
-            _webHostEnvironment = webHostEnvironment;
             _roleManager = roleManager;
         }
 
-        public Task<StatusModel> ChangePassword(ChangePasswordModel model)
+        public async Task<StatusModel> ChangePasswordAsync(ChangePasswordModel model, string username)
         {
-            throw new NotImplementedException();
+            var status = new StatusModel();
+            var user = await _userManager.FindByNameAsync(username);
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                status.StatusMessage = "Password changed successfully";
+                status.StatusValue = true;
+                return status;
+            }
+
+            status.StatusMessage = "Something went wrong";
+            status.StatusValue = false;
+            return status;
+        }
+
+        public async Task<StatusModel> DeleteAccountAsync(string username)
+        {
+            var status = new StatusModel();
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            var reault = await _userManager.DeleteAsync(user);
+
+            if(reault.Succeeded)
+            {
+                status.StatusValue = true;
+                return status;
+            }
+
+            status.StatusValue = false;
+            return status;
         }
 
         public async  Task<StatusModel> LoginAsync(LoginModel model)
@@ -70,14 +99,23 @@ namespace WISHLIST.Repositories.Implementation
                 status.StatusValue = false;
                 return status;
             }
-            status.StatusMessage = "User registered successfully";
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
             status.StatusValue = true;
             return status;
         }
 
-        public Task<StatusModel> Logout(string Id)
+        public async Task LogoutAsync()
         {
-            throw new NotImplementedException();
+            await _signInManager.SignOutAsync();
         }
 
         public async Task<StatusModel> RegistrationAsync(RegistrationModel model)
@@ -134,5 +172,6 @@ namespace WISHLIST.Repositories.Implementation
 
             return status;
         }
+
     }
 }

@@ -8,8 +8,10 @@ namespace WISHLIST.Repositories.Abstract
 
         public Task<StatusModel> LoginAsync(LoginModel model);
 
-        public Task<StatusModel> Logout(string Id);
+        public Task LogoutAsync();
 
-        public Task<StatusModel> ChangePassword(ChangePasswordModel model);
+        public Task<StatusModel> ChangePasswordAsync(ChangePasswordModel model, string username);
+
+        public Task<StatusModel> DeleteAccountAsync(string username);
     }
 }

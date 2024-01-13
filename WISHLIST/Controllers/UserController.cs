@@ -21,7 +21,7 @@ namespace WISHLIST.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Dashboard()
+        public IActionResult Dashboard(string username)
         {
             //var user = await _userManager.FindByNameAsync(User.Identity.Name);
 

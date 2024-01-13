@@ -1,0 +1,43 @@
+﻿@model WISHLIST.Models.DTO.LoginModel
+@{
+}
+
+<body class="form-body">
+    <div class="login-form-container">
+        <form method="delete" asp-controller="UserAuthentication" asp-action="DeleteAccount">
+            <div class="login-form-input">
+                <div class="login-divide">
+                    <div class="input-container">
+                        <label class="label" asp-for="Username">Username</label>
+                        <input class="input" type="text" asp-for="Username" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="Username"></span>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label class="label" asp-for="Password">Password</label>
+                        <input class="input" type="password" asp-for="Password" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="Password"></span>
+                        </div>
+                    </div>
+                    @{
+                        if (TempData["msg"] != null)
+                        {
+                            <div class="span-message">
+                                <span>@TempData["msg"]</span>
+                            </div>
+                            TempData["msg"] = String.Empty;
+                        }
+                    }
+                </div>
+
+                <div class="button-container">
+                    <input class="button" onclick="return window.confirm('Are you sure you want to delete this account? You won`t be able to restore your account')" type="submit" value="Видалити" />
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
