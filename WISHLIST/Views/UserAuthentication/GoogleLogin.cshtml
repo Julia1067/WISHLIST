@@ -1,0 +1,22 @@
+﻿<div class="card-shadow-border">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-white">Google Login</h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="cont">
+                <label>Username</label>
+                <input type="text" />
+            </div>
+            <div class="cont">
+                <label>Password</label>
+                <input type="password" />
+            </div>
+            <div class="cont">
+                <a asp-controller="UserAuthentication" asp-action="GoogleLogin"></a>
+            </div>
+        </form>
+    </div>
+</div>

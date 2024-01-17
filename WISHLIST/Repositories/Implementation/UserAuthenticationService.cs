@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Security.Claims;
 using WISHLIST.Models.Domain;
 using WISHLIST.Models.DTO;
@@ -148,16 +149,18 @@ namespace WISHLIST.Repositories.Implementation
                 Email = model.Email,
                 Surname = model.Surname,
                 UserName = model.Username,
-                Birthday = model.Birthday,
+                Birthday = DateTime.Now,
                 ImageFilePath = "завантаження.png"
             };
 
+            var role = "user";
+
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (!await _roleManager.RoleExistsAsync(model.Role))
-                await _roleManager.CreateAsync(new IdentityRole(model.Role));
+            if (!await _roleManager.RoleExistsAsync(role))
+                await _roleManager.CreateAsync(new IdentityRole(role));
             
-            await _userManager.AddToRoleAsync(user, model.Role);
+            await _userManager.AddToRoleAsync(user, role);
 
             if (!result.Succeeded)
             {
@@ -173,5 +176,98 @@ namespace WISHLIST.Repositories.Implementation
             return status;
         }
 
+        public async Task<object> ExternlLoginCallbackMethod()
+        {
+            var status = new StatusModel();
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+
+            if (info == null)
+            {
+                status.StatusValue = false;
+                status.StatusMessage = "Error loading external login information";
+                return status;
+            }
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            if(signInResult.Succeeded)
+            {
+                status.StatusValue = true;
+                return status;
+            }
+            else
+            {
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+                if (email == null)
+                {
+                    status.StatusValue = false;
+                    status.StatusMessage = "Your email doesn`t exist";
+                    return status;
+                }
+                else
+                {
+                    var user = await _userManager.FindByEmailAsync(email);
+
+                    if (user != null)
+                    {
+                        status.StatusValue = false;
+                        status.StatusMessage = "We consider your personal information was damaged\n" +
+                            "Try to register new account\n" +
+                            "We are sorry for your discomfort";
+                        return status;
+                    }
+                    else
+                    {
+                        var date = info.Principal.FindFirstValue(ClaimTypes.DateOfBirth);
+
+                        user = new();
+
+                        user.Name = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                        user.Surname = info.Principal.FindFirstValue(ClaimTypes.Surname);
+                        user.Email = email;
+                        user.Birthday = Convert.ToDateTime(date);
+
+                        return user;
+                    }
+                }
+            }
+        }
+
+        public async Task<StatusModel> InfoConfirmAsync(InfoConfirm model)
+        {
+            var status = new StatusModel();
+
+            var user = new ApplicationUser();
+
+            user.Surname = model.Surname;
+            user.Email = model.Email;
+            user.Name = model.Name;
+            user.Birthday = model.Birthday;
+            user.UserName = model.Username;
+
+            var result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                status.StatusValue = false;
+                status.StatusMessage = "Error existed on user creation way";
+                return status;
+            }
+
+            string role = "user";
+
+            if (!await _roleManager.RoleExistsAsync(role))
+                await _roleManager.CreateAsync(new IdentityRole(role));
+
+            await _userManager.AddToRoleAsync(user, role);
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+
+            await _userManager.AddLoginAsync(user, info);
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            status.StatusValue = true;
+            return status;
+        }
     }
 }

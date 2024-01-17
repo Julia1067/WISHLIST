@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.ComponentModel.DataAnnotations;
 
 namespace WISHLIST.Models.DTO
 {
@@ -9,5 +10,7 @@ namespace WISHLIST.Models.DTO
 
         [Required]
         public string Password { get; set; }
+
+        public List<AuthenticationScheme> ExternalLogins { get; set; }  
     }
 }
