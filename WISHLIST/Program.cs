@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Owin.Security.Google;
 using WISHLIST.Models.Domain;
 using WISHLIST.Repositories.Abstract;
 using WISHLIST.Repositories.Implementation;
@@ -16,6 +16,21 @@ builder.Services.AddAuthentication()
     {
         googleOptions.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
         googleOptions.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+    });
+
+builder.Services.AddAuthentication()
+    .AddFacebook(facebookOptions =>
+    {
+        facebookOptions.ClientId = builder.Configuration.GetSection("FacebookKeys:ClientId").Value;
+        facebookOptions.ClientSecret = builder.Configuration.GetSection("FacebookKeys:ClientSecret").Value;
+    });
+
+builder.Services.AddAuthentication().
+    AddTwitter(twitterOptions =>
+    {
+        twitterOptions.ConsumerKey = builder.Configuration.GetSection("TwitterKeys:ApiId").Value;
+        twitterOptions.ConsumerSecret = builder.Configuration.GetSection("TwitterKeys:ApiSecret").Value;
+        twitterOptions.RetrieveUserDetails = true;
     });
 
 builder.Services

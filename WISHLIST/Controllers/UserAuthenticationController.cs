@@ -21,15 +21,11 @@ namespace WISHLIST.Controllers
     {
         private readonly IUserAuthenticationService _userAuthenticationService;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        public UserAuthenticationController(IUserAuthenticationService userAuthenticationService, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserAuthenticationController(IUserAuthenticationService userAuthenticationService, 
+            SignInManager<ApplicationUser> signInManager)
         {
             _userAuthenticationService = userAuthenticationService;
             _signInManager = signInManager;
-            _userManager = userManager;
-            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -185,6 +181,7 @@ namespace WISHLIST.Controllers
 
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> InfoConfirm(InfoConfirm model)
         {
@@ -202,6 +199,7 @@ namespace WISHLIST.Controllers
 
             return RedirectToAction("Dashboard", "User", new { username = User.Identity.Name });
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

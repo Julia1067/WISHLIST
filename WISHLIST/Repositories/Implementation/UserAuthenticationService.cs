@@ -103,7 +103,7 @@ namespace WISHLIST.Repositories.Implementation
             var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
+                    new(ClaimTypes.Name, user.UserName),
                 };
 
             foreach (var userRole in userRoles)
@@ -202,6 +202,7 @@ namespace WISHLIST.Repositories.Implementation
                 {
                     status.StatusValue = false;
                     status.StatusMessage = "Your email doesn`t exist";
+                    
                     return status;
                 }
                 else
@@ -218,14 +219,12 @@ namespace WISHLIST.Repositories.Implementation
                     }
                     else
                     {
-                        var date = info.Principal.FindFirstValue(ClaimTypes.DateOfBirth);
-
                         user = new();
 
                         user.Name = info.Principal.FindFirstValue(ClaimTypes.GivenName);
                         user.Surname = info.Principal.FindFirstValue(ClaimTypes.Surname);
                         user.Email = email;
-                        user.Birthday = Convert.ToDateTime(date);
+                        user.Birthday = DateTime.Now;
 
                         return user;
                     }
@@ -237,7 +236,23 @@ namespace WISHLIST.Repositories.Implementation
         {
             var status = new StatusModel();
 
-            var user = new ApplicationUser();
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                status.StatusValue = false;
+                status.StatusMessage = "User with this email already exists";
+                return status;
+            }
+
+            user = await _userManager.FindByNameAsync(model.Username);
+            if (user != null)
+            {
+                status.StatusValue = false;
+                status.StatusMessage = "User with this username already exists";
+                return status;
+            }
+
+            user = new ApplicationUser();
 
             user.Surname = model.Surname;
             user.Email = model.Email;

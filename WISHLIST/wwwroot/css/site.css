@@ -9,7 +9,6 @@
     text-decoration: none;
 }
 
-
 body {
     margin: 0;
     padding: 0;
@@ -26,7 +25,6 @@ a {
     color: #909090;
     text-decoration: none;
 }
-
 
 main {
     margin: 0;
@@ -115,7 +113,6 @@ main {
     justify-content: center;
     align-items: center;
     border-radius: 1em;
-    
 }
 
 .form-redirect {
@@ -172,9 +169,11 @@ h1{
     border-bottom: 1px solid black;
     transition: 0.2s;
 }
+
 ul{
     padding: 0;
 }
+
 ul li:hover a {
     padding-left: 50px;
     background: #68009f;
@@ -246,4 +245,38 @@ label #cancel {
     display: grid;
     justify-content: center;
     padding-top: 30px
+}
+
+.icons{
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5em;
+}
+
+.auth-icon {
+    display: flex;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding: 0.2em;
+    width: 1.7em;
+    height: 1.7em;
+    background: #141414;
+    border-radius: 0.2em;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon {
+    color: #d49dff;
+    font-size: 20px;
+    
+}
+
+.auth-icon:hover {
+    background: #d49dff;
+    
+}
+
+.auth-icon:hover  .icon{
+    color: #68009f;
 }

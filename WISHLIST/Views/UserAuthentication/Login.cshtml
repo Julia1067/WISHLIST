@@ -4,6 +4,7 @@
 }
 
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<script src="https://kit.fontawesome.com/097a8526d1.js" crossorigin="anonymous"></script>
 
 
 <body class="form-body">
@@ -44,27 +45,14 @@
                 </div>
 
                 <a class="form-redirect" href="/UserAuthentication/Registration">REGISTRATION</a>
-                
-                <a class="form-redirect" href="~/UserAuthentication/ExternalLogin?provider=Google">Google Authentication</a>
-                
-                @*{
-                    if(Model.ExternalLogins.Count == 0)
-                    {
-                        <div>No external logins configured</div>
-                    }
-                    else
-                    {
-                        @foreach(var provider in Model.ExternalLogins)
-                        {
-                            <button type="submit" class="btn btn-primary"
-                                    name="provider" value="@provider.Name"
-                                    title="Log in using your @provider.DisplayName account">
-                                @provider.DisplayName
-                            </button>
-                        }
-                    }
-                }*@
-                
+
+                <div class="icons">
+                    <a class="auth-icon" href="~/UserAuthentication/ExternalLogin?provider=Google"><i class="fa-brands fa-google icon"></i></a>
+
+                    <a class="auth-icon" href="~/UserAuthentication/ExternalLogin?provider=Facebook"><i class="fa-brands fa-facebook-f icon"></i></a>
+
+                    <a class="auth-icon" href="~/UserAuthentication/ExternalLogin?provider=Twitter"><i class="fa-brands fa-twitter icon"></i></a>
+                </div>
             </div>
         </form>
     </div>
