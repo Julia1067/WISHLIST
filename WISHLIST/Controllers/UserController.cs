@@ -8,32 +8,20 @@ using WISHLIST.Repositories.Abstract;
 namespace WISHLIST.Controllers
 {
     [Authorize(Roles = "user")]
-    public class UserController : Controller
+    public class UserController(IUserService userService,
+                                UserManager<ApplicationUser> userManager,
+                                IWishlistService wishlistService) : Controller
     {
-        private readonly IUserService _userService;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public UserController(IUserService userService,
-                              UserManager<ApplicationUser> userManager)
-        {
-            _userService = userService;
-            _userManager = userManager;
-        }
+        private readonly IUserService _userService = userService;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IWishlistService _wishlistService = wishlistService;
 
         [HttpGet]
-        public IActionResult Dashboard(string username)
+        public async Task<IActionResult> Dashboard(string username)
         {
-            //var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var list = await _wishlistService.GetAuthorWishlistListAsync(username);
 
-            //var correctedPath = $"/images/{user.ImageFilePath}";
-
-            //var model = new UserInfoChangeModel();
-
-            //model.Surname = user.Surname;
-            //model.Name = user.Name;
-            //model.ImageFilePath = correctedPath;
-
-            return View();
+            return View(list);
         }
 
         [HttpGet]

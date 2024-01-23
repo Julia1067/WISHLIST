@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WISHLIST.Models.Domain
 {
-    public class DatabaseContext: IdentityDbContext<ApplicationUser>
+    public class DatabaseContext(DbContextOptions<DatabaseContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) 
-        {
-            
-        }
+        public DbSet<WishlistModel> Wishlists { get; set; }
+
+        public DbSet<GiftModel> Gifts { get; set; }
     }
 }

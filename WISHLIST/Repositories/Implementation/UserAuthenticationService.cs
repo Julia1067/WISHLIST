@@ -18,9 +18,9 @@ namespace WISHLIST.Repositories.Implementation
         private readonly RoleManager<IdentityRole> _roleManager;
 
 
-        public UserAuthenticationService(SignInManager<ApplicationUser> signInManager, 
-                                         UserManager<ApplicationUser> userManager, 
-                                         DatabaseContext dbContext, 
+        public UserAuthenticationService(SignInManager<ApplicationUser> signInManager,
+                                         UserManager<ApplicationUser> userManager,
+                                         DatabaseContext dbContext,
                                          RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
@@ -56,7 +56,7 @@ namespace WISHLIST.Repositories.Implementation
 
             var reault = await _userManager.DeleteAsync(user);
 
-            if(reault.Succeeded)
+            if (reault.Succeeded)
             {
                 status.StatusValue = true;
                 return status;
@@ -66,7 +66,7 @@ namespace WISHLIST.Repositories.Implementation
             return status;
         }
 
-        public async  Task<StatusModel> LoginAsync(LoginModel model)
+        public async Task<StatusModel> LoginAsync(LoginModel model)
         {
             var status = new StatusModel();
 
@@ -79,7 +79,7 @@ namespace WISHLIST.Repositories.Implementation
                 return status;
             }
 
-            if(!await _userManager.CheckPasswordAsync(user, model.Password))
+            if (!await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 status.StatusMessage = "Invalid password";
                 status.StatusValue = false;
@@ -94,7 +94,7 @@ namespace WISHLIST.Repositories.Implementation
                 status.StatusValue = false;
                 return status;
             }
-            else if(!result.Succeeded)
+            else if (!result.Succeeded)
             {
                 status.StatusMessage = "Error on loggin in";
                 status.StatusValue = false;
@@ -159,7 +159,7 @@ namespace WISHLIST.Repositories.Implementation
 
             if (!await _roleManager.RoleExistsAsync(role))
                 await _roleManager.CreateAsync(new IdentityRole(role));
-            
+
             await _userManager.AddToRoleAsync(user, role);
 
             if (!result.Succeeded)
@@ -189,7 +189,7 @@ namespace WISHLIST.Repositories.Implementation
             }
 
             var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
-            if(signInResult.Succeeded)
+            if (signInResult.Succeeded)
             {
                 status.StatusValue = true;
                 return status;
@@ -202,7 +202,7 @@ namespace WISHLIST.Repositories.Implementation
                 {
                     status.StatusValue = false;
                     status.StatusMessage = "Your email doesn`t exist";
-                    
+
                     return status;
                 }
                 else

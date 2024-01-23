@@ -29,7 +29,7 @@ a {
 main {
     margin: 0;
     padding: 0;
-    display: flex;
+    display: grid;
 }
 
 .login-form-container {
@@ -45,7 +45,7 @@ main {
 .action {
     text-align: center;
     margin: 1em;
-    font-family:Tahoma;
+    font-family: Tahoma;
     font-size: 30px
 }
 
@@ -77,9 +77,9 @@ main {
     transition: linear 0.1s;
 }
 
-.input:hover, .input:focus {
-    border-bottom: 1px solid #68009f;
-}
+    .input:hover, .input:focus {
+        border-bottom: 1px solid #68009f;
+    }
 
 .button {
     width: 9em;
@@ -89,14 +89,14 @@ main {
     color: #68009f;
     font: bold 14px Tahoma;
     transition: linear 0.2s;
-    margin-top: 2em
+    margin-top: 0.5em
 }
 
-.button:hover {
-    background: transparent;
-    border: 2px solid #909090;
-    color: #909090;
-}
+    .button:hover {
+        background: transparent;
+        border: 2px solid #909090;
+        color: #909090;
+    }
 
 .button-container {
     margin-top: 1em;
@@ -120,7 +120,7 @@ main {
     font-size: 14px;
 }
 
-.registration-input-container{
+.registration-input-container {
     display: flex;
 }
 
@@ -142,7 +142,7 @@ main {
 }
 
 .sidebar {
-    position: fixed;
+    position: absolute;
     left: -400px;
     width: 400px;
     height: 100%;
@@ -150,7 +150,7 @@ main {
     transition: all 0.5s;
 }
 
-h1{
+h1 {
     text-align: center;
     font-family: Tahoma;
     font: 40px Tahoma;
@@ -170,14 +170,14 @@ h1{
     transition: 0.2s;
 }
 
-ul{
+ul {
     padding: 0;
 }
 
-ul li:hover a {
-    padding-left: 50px;
-    background: #68009f;
-}
+    ul li:hover a {
+        padding-left: 50px;
+        background: #68009f;
+    }
 
 .sidebar ul a i {
     margin-right: 16px;
@@ -226,12 +226,12 @@ label #cancel {
     left: 350px;
 }
 
-.file-form{
+.file-form {
     margin-top: 5em;
     margin-bottom: 4em;
 }
 
-.file-form-container{
+.file-form-container {
     display: grid;
     justify-content: center;
     align-items: center;
@@ -247,7 +247,7 @@ label #cancel {
     padding-top: 30px
 }
 
-.icons{
+.icons {
     display: flex;
     justify-content: center;
     margin-top: 1.5em;
@@ -269,14 +269,169 @@ label #cancel {
 .icon {
     color: #d49dff;
     font-size: 20px;
-    
 }
 
 .auth-icon:hover {
     background: #d49dff;
-    
+    transition: 0.5s;
 }
 
-.auth-icon:hover  .icon{
+    .auth-icon:hover .icon {
+        color: #68009f;
+    }
+
+.dashboard-body {
+    display: flex;
+}
+
+.list-header {
+    text-align: left;
+    margin-top: 2em;
+    margin-left: 0.5em;
+}
+
+.left-side {
+    width: 40vw;
+}
+
+.wishlists {
+    margin-top: 3em;
+}
+
+.wishlist {
+    background: #d49dff;
+    height: 4em;
+    display: flex;
+    align-items: center;
+    margin: 1em;
+    padding: 1em;
+    font-size: 20px;
+    font-weight: 700;
+    justify-content: space-between;
+    border-radius: 0.3em;
+}
+
+.center-side {
+    margin-left: 40vw;
+    margin-top: 20vh;
+    width: 20vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+}
+
+.add-button {
+    font-size: 40px;
+    background: #d49dff;
+    width: 1.6em;
+    height: 1.6em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.8em;
+}
+
+.add-icon {
+    transform: rotate(45deg);
     color: #68009f;
+}
+
+.add-button:hover {
+    background: none;
+    transition: 0.5s;
+}
+
+.add-button:hover .add-icon {
+    color: #d49dff;
+    transition: 0.5s;
+}
+
+.wishlist-link {
+    color: #68009f;
+    font-family: Consolas;
+}
+
+.wishlist:hover {
+    background: #c780ff;
+}
+
+.wishlist:hover .wishlist-link{
+    color: #68009f;
+}
+
+.wishlist-actions{
+    display: none;
+}
+
+.wishlist:hover .wishlist-actions{
+    display: flex;
+}
+
+.delete{
+    color: #68009f;
+}
+
+.upd-form{
+    margin-left: 3em
+}
+
+.inside-upd-form{
+    display: flex;
+    align-items: center;
+}
+
+.upd-container{
+    width: 25em;
+}
+
+.upd-textarea {
+    width: 20em;
+    height: 6em;
+    box-sizing: border-box;
+    resize: none;
+    padding: 0.5em;
+    border-radius: 0.3em;
+    background: #c8c8c8;
+    color: #250039;
+}
+
+.upd-input {
+    width: 20em;
+    background: transparent;
+    border-bottom: 1px solid #d49dff;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-family: Tahoma;
+    font-size: 16px;
+    transition: linear 0.1s;
+}
+
+.add-form{
+    display: grid;
+    justify-content: center;
+    align-content: space-between;
+    height: 100vh;
+}
+
+.add-main {
+    margin-top: 8em;
+    display: grid;
+    background: #141414;
+    width: 25em;
+    height: 35em;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1em;
+}
+
+.add-textarea {
+    width: 15em;
+    height: 6em;
+    box-sizing: border-box;
+    resize: none;
+    padding: 0.5em;
+    border-radius: 0.3em;
+    background: #c8c8c8;
+    color: #250039;
 }

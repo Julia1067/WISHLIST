@@ -1,6 +1,61 @@
-﻿
+﻿@using WISHLIST.Models.Domain
+@model List<WishlistModel>
 @{
     var user = User.Identity.Name;
 }
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div class="dashboard-body">
+    <div class="left-side">
+        <h2 class="list-header">MY WISH LISTS</h2>
+        <div class="wishlists">
+            @{
+                foreach (var wishlist in Model)
+                {
+                    <div class="wishlist">
+                        <a class="wishlist-link" href="~/Wishlist/UpdateWishlist?wishlistId=@wishlist.Id">
 
-Hello, @user
+                            @wishlist.Name
+                            <div class="wishlist-actions">
+                                <a class="delete-ref" href="javascript:void(0)" data-wishlist-id="@wishlist.Id"><i class="fa-solid fa-trash-can delete"></i></a>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="center-side">
+        <a class="add-button" href="~/Wishlist/CreateWishlist"><i class="fa-solid fa-xmark add-icon"></i></a>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete-ref').on('click', function () {
+                var deleteRef = $(this); // Store a reference to the clicked element
+                var wishlistId = deleteRef.data('wishlist-id');
+
+                $.ajax({
+                    url: '/Wishlist/DeleteWishlist',
+                    type: 'DELETE',
+                    data: { wishlistId: wishlistId },
+                    success: function (data) {
+                        // Handle success, if needed
+                        console.log('Wishlist deleted successfully');
+
+                        // Find the closest parent .wishlist and remove it
+                        deleteRef.closest('.wishlist').remove();
+
+                        // Reload the page
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        // Handle error, if needed
+                        console.error('Error deleting wishlist:', error);
+                    }
+                });
+            });
+        });
+    </script>
+}

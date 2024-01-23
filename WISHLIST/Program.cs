@@ -44,8 +44,10 @@ builder.Services
     .AddEntityFrameworkStores<DatabaseContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddTransient<IWishlistService, WishlistService>();
+
 
 builder.Services.Configure<IISServerOptions>(options =>
 {

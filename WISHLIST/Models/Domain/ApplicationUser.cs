@@ -13,5 +13,7 @@ namespace WISHLIST.Models.Domain
         public DateTime Birthday { get; set; }
 
         public string ImageFilePath {  get; set; }
+
+        public List<WishlistModel> Wishlists { get; set; }
     }
 }

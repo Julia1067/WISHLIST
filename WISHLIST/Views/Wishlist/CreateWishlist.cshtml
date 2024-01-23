@@ -1,0 +1,50 @@
+﻿@using WISHLIST.Models.DTO
+@model WishlistCreateModel
+
+@{
+}
+<body class="add-form">
+    <main class="add-main">
+        <div class="add-form-container">
+            <div class="action">ADD WISHLIST</div>
+            <form asp-controller="Wishlist" asp-action="CreateWishlist">
+                <div class="login-form-input">
+                    <div class="login-divide">
+                        <div class="input-container">
+                            <label class="label" asp-for="Name">Wish List Name</label>
+                            <input class="input" type="text" asp-for="Name" />
+
+                            <div class="span-message">
+                                <span asp-validation-for="Name"></span>
+                            </div>
+                        </div>
+                        <div class="input-container">
+                            <label class="label" asp-for="Description">Description</label>
+                            <textarea class="add-textarea" type="text" asp-for="Description"></textarea>
+
+                            <div class="span-message">
+                                <span asp-validation-for="Description"></span>
+                            </div>
+                        </div>
+                        @{
+                            if (TempData["msg"] != null)
+                            {
+                                <div class="span-message">
+                                    <span>@TempData["msg"]</span>
+                                </div>
+                                TempData["msg"] = String.Empty;
+                            }
+                        }
+                    </div>
+
+                    <div class="button-container">
+                        <input class="button" type="submit" value="CREATE" />
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </main>
+
+
+</body>

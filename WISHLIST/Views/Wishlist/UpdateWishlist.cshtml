@@ -1,0 +1,43 @@
+﻿@using WISHLIST.Models.DTO
+@model WishlistCreateModel
+
+<div class="upd-form">
+    <form method="post" asp-controller="Wishlist" asp-action="UpdateWishlist">
+        <div class="inside-upd-form">
+            <div class="upd-container">
+                <input type="hidden" asp-for="Id" value="@Model.Id"/>
+                <div class="input-container">
+                    <label class="label" asp-for="Name">Wish List Name</label>
+                    <input class="upd-input" type="text" asp-for="Name" />
+
+                    <div class="span-message">
+                        <span asp-validation-for="Name"></span>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label class="label" asp-for="Description">Description</label>
+                    <textarea class="upd-textarea" type="text" asp-for="Description"></textarea>
+
+                    <div class="span-message">
+                        <span asp-validation-for="Description"></span>
+                    </div>
+                </div>
+            </div>
+            @{
+                if (TempData["msg"] != null)
+                {
+                    <div class="span-message">
+                        <span>@TempData["msg"]</span>
+                    </div>
+                    TempData["msg"] = String.Empty;
+                }
+            }
+
+            <div class="button-container">
+                <input class="button" type="submit" value="SAVE" />
+            </div>
+        </div>
+
+    </form>
+</div>
+

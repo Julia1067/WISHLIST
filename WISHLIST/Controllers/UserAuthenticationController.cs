@@ -17,16 +17,11 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace WISHLIST.Controllers
 {
-    public class UserAuthenticationController : Controller
+    public class UserAuthenticationController(IUserAuthenticationService userAuthenticationService,
+                                              SignInManager<ApplicationUser> signInManager) : Controller
     {
-        private readonly IUserAuthenticationService _userAuthenticationService;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        public UserAuthenticationController(IUserAuthenticationService userAuthenticationService, 
-            SignInManager<ApplicationUser> signInManager)
-        {
-            _userAuthenticationService = userAuthenticationService;
-            _signInManager = signInManager;
-        }
+        private readonly IUserAuthenticationService _userAuthenticationService = userAuthenticationService;
+        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
         [HttpGet]
         public async Task<IActionResult> Login()

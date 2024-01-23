@@ -15,8 +15,8 @@ namespace WISHLIST.Repositories.Implementation
         private readonly DatabaseContext _databaseContext;
         private readonly IWebHostEnvironment _environment;
 
-        public UserService(UserManager<ApplicationUser> userManager, 
-            IWebHostEnvironment environment, 
+        public UserService(UserManager<ApplicationUser> userManager,
+            IWebHostEnvironment environment,
             DatabaseContext databaseContext)
         {
             _userManager = userManager;
@@ -54,7 +54,7 @@ namespace WISHLIST.Repositories.Implementation
         {
             var user = await _userManager.FindByNameAsync(username);
 
-            return user.ImageFilePath; 
+            return user.ImageFilePath;
         }
 
         public async Task<StatusModel> SaveFile(string username, IFormFile file)
@@ -67,13 +67,13 @@ namespace WISHLIST.Repositories.Implementation
                 return status;
             }
             string extension = Path.GetExtension(file.FileName);
-            
+
             string[] extensions = [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png"];
 
-            
+
 
             bool result = false;
-            foreach ( var item in extensions)
+            foreach (var item in extensions)
             {
                 if (extension == item)
                 {

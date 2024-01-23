@@ -12,8 +12,8 @@ using WISHLIST.Models.Domain;
 namespace WISHLIST.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240104190127_init")]
-    partial class init
+    [Migration("20240121112012_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -180,6 +180,9 @@ namespace WISHLIST.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ImageFilePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -232,6 +235,57 @@ namespace WISHLIST.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GiftUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageFilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WishlistId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("Gifts");
+                });
+
+            modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Wishlists");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -281,6 +335,34 @@ namespace WISHLIST.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
+                {
+                    b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
+                        .WithMany("Gifts")
+                        .HasForeignKey("WishlistId");
+
+                    b.Navigation("Wishlist");
+                });
+
+            modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
+                {
+                    b.HasOne("WISHLIST.Models.Domain.ApplicationUser", "Author")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("WISHLIST.Models.Domain.ApplicationUser", b =>
+                {
+                    b.Navigation("Wishlists");
+                });
+
+            modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
+                {
+                    b.Navigation("Gifts");
                 });
 #pragma warning restore 612, 618
         }
