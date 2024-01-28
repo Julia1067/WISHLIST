@@ -13,6 +13,7 @@ body {
     margin: 0;
     padding: 0;
     background: black;
+    box-sizing: border-box;
 }
 
 .form-body {
@@ -82,6 +83,9 @@ main {
     }
 
 .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 9em;
     height: 3em;
     border-radius: 0.5em;
@@ -434,4 +438,317 @@ label #cancel {
     border-radius: 0.3em;
     background: #c8c8c8;
     color: #250039;
+}
+
+.gift-create-form{
+    background: rgba(255, 255, 255,0.1);
+    margin: 3em;
+    border-radius: 1em;
+    padding: 1.5em;
+}
+
+.gift-create-inside-form{
+    display: grid;
+}
+
+.gift-inputs{
+    display: flex;
+    justify-content: space-around;
+}
+
+.input-file {
+    position: relative;
+    display: inline-block;
+}
+
+.input-file span {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    font-size: 14px;
+    vertical-align: middle;
+    color: #250039;
+    text-align: center;
+    border-radius: 0.3em;
+    background: #d49dff;
+    line-height: 1.5em;
+    height: 3em;
+    width: 17em;
+    padding:0.5em;
+    box-sizing: border-box;
+    border: none;
+    margin-bottom: 1.2em;
+    transition: background-color 0.2s;
+}
+
+.input-file input[type=file] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    display: block;
+    width: 0;
+    height: 0;
+}
+
+.input-file:hover span {
+    background: #68009f;
+    color: #d49dff;
+}
+
+.gift-properties-divide{
+    margin: 1em;
+}
+
+.radio-container {
+    display: flex;
+    height: 3em;
+    width: 17em;
+    border-radius: 0.3em;
+    position: relative;
+    margin-bottom: 0.6em;
+}
+
+.radio {
+    display: flex;
+    align-items: center;
+    outline: none;
+    cursor: pointer;
+    width: 7.4em;
+    height: 100%;
+    border-radius: 0.3em;
+    color: #d49dff;
+    padding: 0.5em;
+    appearance: none;
+    transition: all 100ms linear;
+    
+}
+
+.radio:checked {
+    background: #d49dff;
+    color: #250039;
+}
+
+.radio:before {
+    content: attr(label);
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 12em;
+    margin-right: 1.5em;
+    margin-top: 2.6em;
+    display: flex;
+    justify-content: center;
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    background-color: #d49dff;
+    border-radius: 0.5rem;
+    height: 0.05em;
+    width: 13em;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -7.2px;
+    background-color: #68009f;
+    border-radius: 0.5rem;
+    height: 1rem;
+    width: 1rem;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+    outline: 3px solid #68009f;
+    outline-offset: 0.125rem;
+}
+
+.range-input{
+    display: grid;
+    justify-content: center;
+}
+.value{
+    text-align: right;
+}
+
+.gifts-form {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.gift-fields{
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.gift-info-block{
+    margin-top: 1em;
+}
+
+.fields{
+    display: flex;
+    margin: 1em;
+}
+
+.fields-divide{
+    margin: 1em;
+}
+
+.field-name{
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.ref{
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+h3{
+    margin-left:0.9em;
+    font-size: 35px;
+}
+
+.gift {
+    width: 53em;
+    background: rgba(255, 255, 255,0.1);
+    border-radius: 1em;
+    padding: 1em;
+    margin: 3em;
+}
+
+.buttons {
+    align-items: center;
+    margin-bottom: 1em;
+    display: none;
+}
+
+.gift:hover .buttons {
+    display: grid;
+    transition: 1s;
+}
+
+.images-container{
+    display: flex;
+}
+
+.input-file-list {
+    padding: 10px 0;
+}
+
+.input-file-list-item {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.update-main{
+    justify-content: center;
+    display: grid;
+}
+
+.update-form-container {
+    background: rgba(255, 255, 255,0.1);
+    border-radius: 2em;
+    margin: 2em;
+    /*width: fit-content;*/
+    display: grid;
+    justify-content: center;
+}
+
+.input-file-row{
+    width: 17em;
+    display: grid;
+    justify-content: center;
+}
+
+.current-image-container{
+    width: 17em;
+    display: grid;
+    justify-content: center;
+    text-align: center;
+}
+
+.image-status{
+    height: 3em;
+    align-items: center;
+    display: grid;
+    text-align: center;
+    margin-bottom:0.9em;
+}
+
+.inner-update-form-container{
+    display: grid;
+    justify-content: center;
+}
+
+.name-input {
+    background: none;
+    font-size: 35px;
+    text-align: center;
+
+}
+
+.input-divide{
+    display: flex;
+}
+
+.update-prop-form{
+    display: grid;
+    justify-content: center;
+}
+
+.upd-input-container{
+    display: grid;
+    justify-content: center;
+    margin: 1em;
+    width: 20em;
+}
+
+.input-divide{
+    display: flex;
+    justify-content: center;
+}
+
+.delete-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 9em;
+    height: 3em;
+    border-radius: 0.5em;
+    background: #d49dff;
+    color: #68009f;
+    font: bold 14px Tahoma;
+    transition: linear 0.2s;
+    margin-top: 0.5em
+}
+
+    .delete-button:hover {
+        background: transparent;
+        border: 2px solid #909090;
+        color: #909090;
+    }
+
+.select{
+    width: 12em;
+    height: 2.5em;
+    background: #d49dff;
+    color: #250039;
+    border-radius: 0.3em
 }

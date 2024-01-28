@@ -2,7 +2,7 @@
 
 namespace WISHLIST.Models.DTO
 {
-    public class ChangePasswordModel
+    public class UpdatePasswordModel
     {
         [Required]
         public string CurrentPassword { get; set; }

@@ -13,7 +13,7 @@ namespace WISHLIST.Repositories.Implementation
         private readonly DatabaseContext _dbContext = dbContext;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-        public async Task<StatusModel> CreateWishlistAsync(WishlistCreateModel model, string username)
+        public async Task<StatusModel> CreateWishlistAsync(CreateWishlistModel model, string username)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
             StatusModel status = new();
@@ -60,7 +60,16 @@ namespace WISHLIST.Repositories.Implementation
             StatusModel status = new();
             try
             {
-                await _dbContext.Wishlists.Where(w => w.Id == WishlistId).ExecuteDeleteAsync();
+                var wishlist = await _dbContext.Wishlists.FirstOrDefaultAsync(w=> w.Id == WishlistId);
+
+                var giftsArr = await _dbContext.Gifts.Where(g => g.WishlistId == WishlistId).ToArrayAsync();
+
+                foreach (var gift in giftsArr)
+                {
+                    _dbContext.Gifts.Remove(gift);
+                }
+
+                _dbContext.Wishlists.Remove(wishlist);
 
                 await _dbContext.SaveChangesAsync();
 
@@ -87,7 +96,7 @@ namespace WISHLIST.Repositories.Implementation
             return await _dbContext.Wishlists.FirstOrDefaultAsync(w => w.Id == WishlistId);
         }
 
-        public async Task<StatusModel> UpdateCurrentWishlistAsync(WishlistCreateModel model)
+        public async Task<StatusModel> UpdateCurrentWishlistAsync(CreateWishlistModel model)
         {
             StatusModel status = new();
             try

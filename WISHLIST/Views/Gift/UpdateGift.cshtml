@@ -1,0 +1,139 @@
+﻿@using WISHLIST.Models.DTO
+@model CreateGiftModel
+@{
+}
+
+<body class="update-form">
+    <main class="update-main">
+        <div class="update-form-container">
+            <div class="action">UPDATE GIFT</div>
+            <form asp-controller="Gift" asp-action="UpdateGift" enctype="multipart/form-data">
+                <div class="inner-update-form-container">
+                    <div class="update-prop-form">
+                        <input type="hidden" asp-for="Id" value="@Model.Id" />
+                        <input type="hidden" asp-for="WishlistId" value="@Model.WishlistId" />
+
+                        <div class="input-divide">
+                            <div class="upd-input-container">
+                                <input class="name-input" type="text" asp-for="Name" />
+
+                                <div class="span-message">
+                                    <span asp-validation-for="Name"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-divide">
+                            <div class="images-container">
+                                <div class="current-image-container">
+                                    <div class="image-status">Current image</div>
+                                    <div style="background: url('@Html.Raw(Model.ImagePath)');background-repeat: no-repeat; border-radius: 0.5em; background-position: center center; background-size: cover; height: 15em; width: 15em; margin: 1em;"></div>
+                                </div>
+                                <div class="input-file-row">
+                                    <label class="input-file">
+                                        <input type="file" asp-for="ImageFile">
+                                        <span>Choose the file</span>
+                                    </label>
+                                    <div class="input-file-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-divide">
+                            <div class="upd-input-container">
+                                <label class="label" asp-for="Description">Description</label>
+                                <textarea class="add-textarea" asp-for="Description"></textarea>
+
+                                <div class="span-message">
+                                    <span asp-validation-for="Description"></span>
+                                </div>
+                            </div>
+
+                            <div class="upd-input-container">
+                                <label class="label" class="label" asp-for="GiftUrl">GiftUrl</label>
+                                <input class="input" type="url" asp-for="GiftUrl" />
+
+                                <div class="span-message">
+                                    <span asp-validation-for="GiftUrl"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-divide">
+                            <div class="upd-input-container">
+                                <label class="label" asp-for="IsFulfilled">Status</label>
+                                <div class="radio-container">
+                                    <input label="Fulfiled" class="radio" type="radio" asp-for="IsFulfilled" value="true" />
+
+                                    <input label="Active" class="radio" type="radio" asp-for="IsFulfilled" value="false" />
+                                </div>
+                                <div class="span-message">
+                                    <span asp-validation-for="IsFulfilled"></span>
+                                </div>
+                            </div>
+
+                            <div class="upd-input-container">
+                                <label class="label" asp-for="Priority">Gift Priority</label>
+                                <div class="range-input">
+                                    <div class="value">@Model.Priority</div>
+                                    <input class="range" id="range" type="range" min="1" max="10" step="1" asp-for="Priority" />
+                                </div>
+                                <div class="span-message">
+                                    <span asp-validation-for="Priority"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @{
+                        if (TempData["msg"] != null)
+                        {
+                            <div class="span-message">
+                                <span>@TempData["msg"]</span>
+                            </div>
+                            TempData["msg"] = String.Empty;
+                        }
+                    }
+                    <div class="button-container">
+                        <input class="button" type="submit" value="UPDATE" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+@section scripts {
+    <script>
+        var dt = new DataTransfer();
+
+        $('.input-file input[type=file]').on('change', function () {
+            let $files_list = $(this).closest('.input-file').next();
+            $files_list.empty();
+
+            for (var i = 0; i < this.files.length; i++) {
+                let file = this.files.item(i);
+                dt.items.add(file);
+
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function () {
+                    let new_file_input = '<div class="input-file-list-item">' +
+                        '<img style="width: 15em;height: 15em; border: 0;object-fit: cover;border-radius: 0.5em;" class="input - file - list - img" src="' + reader.result + '">' +
+                        '</div>';
+                    $files_list.append(new_file_input);
+                }
+            };
+            this.files = dt.files;
+        });
+    </script>
+    <script>
+        const sliderEl = document.querySelector("#range");
+        const sliderValue = document.querySelector(".value");
+
+        sliderEl.addEventListener("input", (event) => {
+            const tempSliderValue = event.target.value;
+            sliderValue.textContent = tempSliderValue;
+
+            const progress = (tempSliderValue / sliderEl.max) * 100;
+
+        });
+    </script>
+}

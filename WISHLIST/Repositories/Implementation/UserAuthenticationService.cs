@@ -10,26 +10,17 @@ using WISHLIST.Repositories.Abstract;
 
 namespace WISHLIST.Repositories.Implementation
 {
-    public class UserAuthenticationService : IUserAuthenticationService
+    public class UserAuthenticationService(SignInManager<ApplicationUser> signInManager,
+                                     UserManager<ApplicationUser> userManager,
+                                     DatabaseContext dbContext,
+                                     RoleManager<IdentityRole> roleManager) : IUserAuthenticationService
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly DatabaseContext _dbContext;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly DatabaseContext _dbContext = dbContext;
+        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-
-        public UserAuthenticationService(SignInManager<ApplicationUser> signInManager,
-                                         UserManager<ApplicationUser> userManager,
-                                         DatabaseContext dbContext,
-                                         RoleManager<IdentityRole> roleManager)
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _dbContext = dbContext;
-            _roleManager = roleManager;
-        }
-
-        public async Task<StatusModel> ChangePasswordAsync(ChangePasswordModel model, string username)
+        public async Task<StatusModel> ChangePasswordAsync(UpdatePasswordModel model, string username)
         {
             var status = new StatusModel();
             var user = await _userManager.FindByNameAsync(username);
@@ -232,7 +223,7 @@ namespace WISHLIST.Repositories.Implementation
             }
         }
 
-        public async Task<StatusModel> InfoConfirmAsync(InfoConfirm model)
+        public async Task<StatusModel> InfoConfirmAsync(ConfirmInfoModel model)
         {
             var status = new StatusModel();
 
@@ -259,6 +250,7 @@ namespace WISHLIST.Repositories.Implementation
             user.Name = model.Name;
             user.Birthday = model.Birthday;
             user.UserName = model.Username;
+            user.ImageFilePath = "завантаження.png";
 
             var result = await _userManager.CreateAsync(user);
             if (!result.Succeeded)

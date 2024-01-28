@@ -10,13 +10,13 @@ namespace WISHLIST.Repositories.Abstract
 
         public Task LogoutAsync();
 
-        public Task<StatusModel> ChangePasswordAsync(ChangePasswordModel model, string username);
+        public Task<StatusModel> ChangePasswordAsync(UpdatePasswordModel model, string username);
 
         public Task<StatusModel> DeleteAccountAsync(string username);
 
         public Task<object> ExternlLoginCallbackMethod();
 
-        public Task<StatusModel> InfoConfirmAsync(InfoConfirm model);
+        public Task<StatusModel> InfoConfirmAsync(ConfirmInfoModel model);
 
     }
 }

@@ -47,6 +47,7 @@ builder.Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
 builder.Services.AddTransient<IWishlistService, WishlistService>();
+builder.Services.AddTransient<IGiftService, GiftService>();
 
 
 builder.Services.Configure<IISServerOptions>(options =>

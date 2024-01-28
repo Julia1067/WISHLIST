@@ -6,9 +6,11 @@ using WISHLIST.Repositories.Abstract;
 namespace WISHLIST.Controllers
 {
     [Authorize(Roles = "user")]
-    public class WishlistController(IWishlistService wishlistService) : Controller
+    public class WishlistController(IWishlistService wishlistService,
+                                    IGiftService giftService) : Controller
     {
         private readonly IWishlistService _wishlistService = wishlistService;
+        private readonly IGiftService _giftService = giftService;
 
         [HttpGet]
         public IActionResult CreateWishlist()
@@ -17,7 +19,7 @@ namespace WISHLIST.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWishlist(WishlistCreateModel model)
+        public async Task<IActionResult> CreateWishlist(CreateWishlistModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -44,17 +46,20 @@ namespace WISHLIST.Controllers
         {
             var wishlist = await _wishlistService.GetCurrentWishListAsync(wishlistId);
 
-            WishlistCreateModel model = new();
-            
-            model.Id = wishlistId;
-            model.Name = wishlist.Name;
-            model.Description = wishlist.Description;
+            CombineWishlistGiftModel model = new();
 
+            model.CreateWishlistModel = new CreateWishlistModel();
+            
+            model.CreateWishlistModel.Id = wishlistId;
+            model.CreateWishlistModel.Name = wishlist.Name;
+            model.CreateWishlistModel.Description = wishlist.Description;
+
+            model.GiftsModel = await _giftService.GetAllWishlistGiftsAsync(wishlistId);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateWishlist(WishlistCreateModel model)
+        public async Task<IActionResult> UpdateWishlist(CreateWishlistModel model)
         {
             if (!ModelState.IsValid)
             {

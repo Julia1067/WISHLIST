@@ -89,7 +89,7 @@ namespace WISHLIST.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        public async Task<IActionResult> ChangePassword(UpdatePasswordModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -167,7 +167,7 @@ namespace WISHLIST.Controllers
             var json = TempData["User"] as string;
 
             ApplicationUser user = JsonConvert.DeserializeObject<ApplicationUser>(json);
-            InfoConfirm model = new();
+            ConfirmInfoModel model = new();
 
             model.Email = user.Email;
             model.Surname = user.Surname;
@@ -178,7 +178,7 @@ namespace WISHLIST.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InfoConfirm(InfoConfirm model)
+        public async Task<IActionResult> InfoConfirm(ConfirmInfoModel model)
         {
             if (!ModelState.IsValid)
             {

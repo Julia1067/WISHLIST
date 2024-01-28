@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WISHLIST.Models.Domain;
 
@@ -11,9 +12,11 @@ using WISHLIST.Models.Domain;
 namespace WISHLIST.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240123152459_GiftModelNewFieldsAddition")]
+    partial class GiftModelNewFieldsAddition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,13 +255,10 @@ namespace WISHLIST.Migrations
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("ModificatorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Priority")
+                    b.Property<int>("PriorityId")
                         .HasColumnType("int");
 
                     b.Property<string>("WishlistId")
@@ -266,14 +266,14 @@ namespace WISHLIST.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModificatorId");
+                    b.HasIndex("PriorityId");
 
                     b.HasIndex("WishlistId");
 
                     b.ToTable("Gifts");
                 });
 
-            modelBuilder.Entity("WISHLIST.Models.Domain.ModificatorModel", b =>
+            modelBuilder.Entity("WISHLIST.Models.Domain.Priority", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +286,7 @@ namespace WISHLIST.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Modificators");
+                    b.ToTable("Priorities");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
@@ -366,9 +366,9 @@ namespace WISHLIST.Migrations
 
             modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
                 {
-                    b.HasOne("WISHLIST.Models.Domain.ModificatorModel", "Modificator")
+                    b.HasOne("WISHLIST.Models.Domain.Priority", "Priority")
                         .WithMany()
-                        .HasForeignKey("ModificatorId")
+                        .HasForeignKey("PriorityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -376,7 +376,7 @@ namespace WISHLIST.Migrations
                         .WithMany("Gifts")
                         .HasForeignKey("WishlistId");
 
-                    b.Navigation("Modificator");
+                    b.Navigation("Priority");
 
                     b.Navigation("Wishlist");
                 });

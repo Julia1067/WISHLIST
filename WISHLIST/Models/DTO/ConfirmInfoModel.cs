@@ -2,9 +2,10 @@
 
 namespace WISHLIST.Models.DTO
 {
-    public class UserInfoChangeModel
+    public class ConfirmInfoModel
     {
-        public string Id { get; set; }
+        [Required]
+        public string Username { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -13,8 +14,10 @@ namespace WISHLIST.Models.DTO
         public string Surname { get; set; }
 
         [Required]
-        public DateTime Birthday { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
-        public string ImageFilePath { get; set; }
+        [Required]
+        public DateTime Birthday { get; set; }
     }
 }

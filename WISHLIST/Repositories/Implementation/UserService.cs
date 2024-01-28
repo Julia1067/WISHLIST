@@ -9,22 +9,15 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace WISHLIST.Repositories.Implementation
 {
-    public class UserService : IUserService
+    public class UserService(UserManager<ApplicationUser> userManager,
+        IWebHostEnvironment environment,
+        DatabaseContext databaseContext) : IUserService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly DatabaseContext _databaseContext;
-        private readonly IWebHostEnvironment _environment;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly DatabaseContext _databaseContext = databaseContext;
+        private readonly IWebHostEnvironment _environment = environment;
 
-        public UserService(UserManager<ApplicationUser> userManager,
-            IWebHostEnvironment environment,
-            DatabaseContext databaseContext)
-        {
-            _userManager = userManager;
-            _databaseContext = databaseContext;
-            _environment = environment;
-        }
-
-        public async Task<StatusModel> ChangeInfoAsync(UserInfoChangeModel model)
+        public async Task<StatusModel> ChangeInfoAsync(UpdateUserInfoModel model)
         {
             var status = new StatusModel();
             var user = await _userManager.FindByIdAsync(model.Id);
@@ -50,14 +43,14 @@ namespace WISHLIST.Repositories.Implementation
 
         }
 
-        public async Task<string> GetCurrentImage(string username)
+        public async Task<string> GetCurrentUserImage(string username)
         {
             var user = await _userManager.FindByNameAsync(username);
 
             return user.ImageFilePath;
         }
 
-        public async Task<StatusModel> SaveFile(string username, IFormFile file)
+        public async Task<StatusModel> SaveUserFile(string username, IFormFile file)
         {
             var status = new StatusModel();
             if (file == null || file.Length == 0)
@@ -69,8 +62,6 @@ namespace WISHLIST.Repositories.Implementation
             string extension = Path.GetExtension(file.FileName);
 
             string[] extensions = [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png"];
-
-
 
             bool result = false;
             foreach (var item in extensions)
@@ -86,7 +77,7 @@ namespace WISHLIST.Repositories.Implementation
             {
                 if (file != null)
                 {
-                    Random rand = new Random();
+                    Random rand = new();
 
                     string originalName = file.FileName; //original name initialization
                     string FileName = $"{DateTime.Now:yyyyMMddHHmmss}_{rand.Next(1000000, 999999999)}{extension}";

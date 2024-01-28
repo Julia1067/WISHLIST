@@ -1,6 +1,6 @@
 ﻿namespace WISHLIST.Models.DTO
 {
-    public class WishlistCreateModel
+    public class CreateWishlistModel
     {
         public string Id { get; set; }
 

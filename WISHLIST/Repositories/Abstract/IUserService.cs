@@ -4,11 +4,10 @@ namespace WISHLIST.Repositories.Abstract
 {
     public interface IUserService
     {
-        public Task<StatusModel> ChangeInfoAsync(UserInfoChangeModel model);
+        public Task<StatusModel> ChangeInfoAsync(UpdateUserInfoModel model);
 
-        public Task<StatusModel> SaveFile(string username, IFormFile File);
+        public Task<StatusModel> SaveUserFile(string username, IFormFile File);
 
-        public Task<string> GetCurrentImage(string username);
-
+        public Task<string> GetCurrentUserImage(string username);
     }
 }

@@ -1,25 +1,31 @@
 ﻿@using WISHLIST.Models.DTO
-@model WishlistCreateModel
+@using WISHLIST.Repositories.Abstract
+@model CombineWishlistGiftModel
+@inject IGiftService _giftService;
+
+@{
+    var modificators = await _giftService.GetModificatorListAsync();
+}
 
 <div class="upd-form">
     <form method="post" asp-controller="Wishlist" asp-action="UpdateWishlist">
         <div class="inside-upd-form">
             <div class="upd-container">
-                <input type="hidden" asp-for="Id" value="@Model.Id"/>
+                <input type="hidden" asp-for="CreateWishlistModel.Id" value="@Model.CreateWishlistModel.Id" />
                 <div class="input-container">
-                    <label class="label" asp-for="Name">Wish List Name</label>
-                    <input class="upd-input" type="text" asp-for="Name" />
+                    <label class="label" asp-for="CreateWishlistModel.Name">Wish List Name</label>
+                    <input class="upd-input" type="text" asp-for="CreateWishlistModel.Name" />
 
                     <div class="span-message">
-                        <span asp-validation-for="Name"></span>
+                        <span asp-validation-for="CreateWishlistModel.Name"></span>
                     </div>
                 </div>
                 <div class="input-container">
-                    <label class="label" asp-for="Description">Description</label>
-                    <textarea class="upd-textarea" type="text" asp-for="Description"></textarea>
+                    <label class="label" asp-for="CreateWishlistModel.Description">Description</label>
+                    <textarea class="upd-textarea" type="text" asp-for="CreateWishlistModel.Description"></textarea>
 
                     <div class="span-message">
-                        <span asp-validation-for="Description"></span>
+                        <span asp-validation-for="CreateWishlistModel.Description"></span>
                     </div>
                 </div>
             </div>
@@ -41,3 +47,194 @@
     </form>
 </div>
 
+<div class="gifts-form">
+    @{
+        foreach (var gift in Model.GiftsModel)
+        {
+            <div class="gift">
+                <h3>@gift.Name</h3>
+                <div class="gift-fields">
+                    @{
+                        var correctedPath = @$"/images/{gift.ImageFilePath}";
+                    }
+                    <div style="background-image: url('@Html.Raw(correctedPath)'); background-repeat: no-repeat; border-radius: 0.5em; background-position: center center; background-size: cover; height: 15em; width: 15em; margin: 1em;"></div>
+
+                    <div class="gift-info-block">
+                        <div class="description">@gift.Description</div>
+                        <div class="fields">
+                            <div class="fields-divide">
+                                <p class="field-name">Gift URL:</p>
+                                <a class="ref" href="@gift.GiftUrl">@gift.Name</a>
+                                <p class="field-name">Is fulfilled:</p>
+                                @{
+                                    if (gift.IsFullfilled == false)
+                                    {
+                                        <p>Active</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Fulfilled</p>
+                                    }
+                                }
+                            </div>
+                            <div class="fields-divide">
+                                <p class="field-name">Modificator:</p>
+                                <p>@((await _giftService.GetCurrentModificator(gift.ModificatorId)).Name)</p>
+                                <p class="field-name">Priority:</p>
+                                <p>@gift.Priority</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <a class="button" href="~/Gift/UpdateGift?giftId=@gift.Id">EDIT</a>
+                        <a class="delete-button" href="javascript:void(0)" data-gift-id="@gift.Id">DELETE</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="gift-create-form">
+    <h2>Create a gift</h2>
+    <form method="post" asp-controller="Gift" asp-action="CreateGift" enctype="multipart/form-data">
+        <input type="hidden" asp-for="CreateGiftModel.WishlistId" value="@Model.CreateWishlistModel.Id" />
+        <div class="gift-create-inside-form">
+            <div class="gift-inputs">
+                <div class="gift-properties-divide">
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.Name">Name</label>
+                        <input class="input" type="text" asp-for="CreateGiftModel.Name" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.Name"></span>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.Description">Description</label>
+                        <textarea class="add-textarea" type="text" asp-for="CreateGiftModel.Description"></textarea>
+
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.Description"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gift-properties-divide">
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.ImageFile">Image</label>
+                        <label class="input-file">
+                            <input type="file" asp-for="CreateGiftModel.ImageFile">
+                            <span>CHOOSE THE PICTURE</span>
+                        </label>
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.ImageFile"></span>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.GiftUrl">Gift URL</label>
+                        <input class="input" type="url" asp-for="CreateGiftModel.GiftUrl" />
+
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.GiftUrl"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gift-properties-divide">
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.IsFulfilled">Status</label>
+                        <div class="radio-container">
+                            <input label="Fulfiled" class="radio" type="radio" asp-for="CreateGiftModel.IsFulfilled" value="true" />
+
+                            <input label="Active" class="radio" type="radio" asp-for="CreateGiftModel.IsFulfilled" value="false" />
+                        </div>
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.IsFulfilled"></span>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.Priority">Gift Priority</label>
+                        <div class="range-input">
+                            <div class="value">0</div>
+                            <input class="range" id="range" type="range" min="1" max="10" step="1" asp-for="CreateGiftModel.Priority" />
+                        </div>
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.Priority"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="gift-properties-divide">
+                    <div class="input-container">
+                        <label class="label" asp-for="CreateGiftModel.ModificatorId">Modificator</label>
+                        <div class="custom-dropdown">
+                            <div>
+                                <select class="select" asp-for="CreateGiftModel.ModificatorId" id="modificator">
+                                    @{
+                                        foreach (var modificator in modificators)
+                                        {
+                                            <option value="@modificator.Id">@modificator.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="span-message">
+                            <span asp-validation-for="CreateGiftModel.ModificatorId"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-container">
+                <input class="button" type="submit" value="SAVE" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section scripts {
+    <script>
+        $('.delete-button').on('click', function () {
+            var deleteRef = $(this); // Store a reference to the clicked element
+            var giftId = deleteRef.data('gift-id');
+
+            $.ajax({
+                url: '/Gift/DeleteGift',
+                type: 'DELETE',
+                data: { giftId: giftId },
+                success: function (data) {
+                    // Handle success, if needed
+                    console.log('Gift deleted successfully');
+
+                    // Find the closest parent .wishlist and remove it
+                    deleteRef.closest('.gift').remove();
+
+                    // Reload the page
+                    window.location.reload();
+                },
+                error: function (error) {
+                    // Handle error, if needed
+                    console.error('Error deleting gift:', error);
+                }
+            });
+        });
+    </script>
+    <script>
+        $('.input-file input[type=file]').on('change', function () {
+            let file = this.files[0];
+            $(this).next().html(file.name);
+        });
+    </script>
+    <script>
+        const sliderEl = document.querySelector("#range");
+        const sliderValue = document.querySelector(".value");
+
+        sliderEl.addEventListener("input", (event) => {
+            const tempSliderValue = event.target.value;
+            sliderValue.textContent = tempSliderValue;
+
+            const progress = (tempSliderValue / sliderEl.max) * 100;
+
+        });
+    </script>
+}

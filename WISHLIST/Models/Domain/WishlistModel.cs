@@ -1,4 +1,6 @@
-﻿namespace WISHLIST.Models.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WISHLIST.Models.Domain
 {
     public class WishlistModel
     {
@@ -9,6 +11,9 @@
         public string Description { get; set; }
 
         public string AuthorId { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime CreationDate { get; set; }
 
         public List<GiftModel> Gifts { get; set; }
 

@@ -12,8 +12,8 @@ using WISHLIST.Models.Domain;
 namespace WISHLIST.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240121112012_Init")]
-    partial class Init
+    [Migration("20240123153158_ModificatorModelUpdate")]
+    partial class ModificatorModelUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -237,11 +237,8 @@ namespace WISHLIST.Migrations
 
             modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -252,6 +249,15 @@ namespace WISHLIST.Migrations
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsFullfilled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdateDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ModificatorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -260,9 +266,27 @@ namespace WISHLIST.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ModificatorId");
+
                     b.HasIndex("WishlistId");
 
                     b.ToTable("Gifts");
+                });
+
+            modelBuilder.Entity("WISHLIST.Models.Domain.ModificatorModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Modificators");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
@@ -272,6 +296,9 @@ namespace WISHLIST.Migrations
 
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -339,9 +366,17 @@ namespace WISHLIST.Migrations
 
             modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
                 {
+                    b.HasOne("WISHLIST.Models.Domain.ModificatorModel", "Modificator")
+                        .WithMany()
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
                         .WithMany("Gifts")
                         .HasForeignKey("WishlistId");
+
+                    b.Navigation("Modificator");
 
                     b.Navigation("Wishlist");
                 });

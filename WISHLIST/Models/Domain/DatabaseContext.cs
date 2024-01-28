@@ -8,5 +8,7 @@ namespace WISHLIST.Models.Domain
         public DbSet<WishlistModel> Wishlists { get; set; }
 
         public DbSet<GiftModel> Gifts { get; set; }
+
+        public DbSet<ModificatorModel> Modificators { get; set; }
     }
 }

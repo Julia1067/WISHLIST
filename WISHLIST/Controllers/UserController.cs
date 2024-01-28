@@ -32,7 +32,7 @@ namespace WISHLIST.Controllers
 
             var correctedPath = $"/images/{user.ImageFilePath}";
 
-            var model = new UserInfoChangeModel();
+            var model = new UpdateUserInfoModel();
 
             model.Surname = user.Surname;
             model.Name = user.Name;
@@ -43,7 +43,7 @@ namespace WISHLIST.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> UserInfoChange(UserInfoChangeModel model)
+        public async Task<IActionResult> UserInfoChange(UpdateUserInfoModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace WISHLIST.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveFile(IFormFile file)
         {
-            var result = await _userService.SaveFile(User.Identity.Name, file);
+            var result = await _userService.SaveUserFile(User.Identity.Name, file);
 
             TempData["msg"] = result.StatusMessage;
 
