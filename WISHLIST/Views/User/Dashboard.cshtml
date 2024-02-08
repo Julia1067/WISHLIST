@@ -1,31 +1,160 @@
-﻿@using WISHLIST.Models.Domain
-@model List<WishlistModel>
+﻿@using WISHLIST.Models.DTO
+@using WISHLIST.Models.Domain
+@using WISHLIST.Repositories.Abstract
+@model CombineDashboardViewModel
+@inject IUserService _userService
+@inject IWishlistService _wishlistService
 @{
-    var user = User.Identity.Name;
+    var user = Model.User;
+    var correctedPath = $"/images/{user.ImageFilePath}";
 }
+
+<style>
+    .user-image {
+        background: url('@Html.Raw(correctedPath)');
+        background-repeat: no-repeat;
+        border-radius: 7.5em;
+        background-position: center center;
+        background-size: cover;
+        height: 15em;
+        width: 15em;
+        margin: 1em;
+    }
+</style>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <div class="dashboard-body">
     <div class="left-side">
-        <h2 class="list-header">MY WISH LISTS</h2>
-        <div class="wishlists">
+        <div class="wishlists-side">
             @{
-                foreach (var wishlist in Model)
+                if (User.Identity.Name == user.UserName)
                 {
-                    <div class="wishlist">
-                        <a class="wishlist-link" href="~/Wishlist/UpdateWishlist?wishlistId=@wishlist.Id">
+                    <h2 class="list-header">MY WISH LISTS</h2>
+                }
+                else
+                {
+                    <h2 class="list-header">@user.UserName's WISH LISTS</h2>
+                }
+            }
+            <div class="wishlists">
+                @{
+                    
+                    if (User.Identity.Name == user.UserName)
+                    {
+                        foreach (var ownerWishlist in Model.Wishlists)
+                        {
+                            var wishlist = await _wishlistService.GetCurrentWishListAsync(ownerWishlist.WishlistId);
 
-                            @wishlist.Name
-                            <div class="wishlist-actions">
-                                <a class="delete-ref" href="javascript:void(0)" data-wishlist-id="@wishlist.Id"><i class="fa-solid fa-trash-can delete"></i></a>
-                            </div>
-                        </a>
-                    </div>
+                            if (user.Id == wishlist.AuthorId)
+                            {
+                                <div class="wishlist">
+                                    <a class="wishlist-link" href="~/Wishlist/UpdateWishlist?wishlistId=@wishlist.Id">
+                                        @wishlist.Name
+                                        <div class="wishlist-actions">
+                                            <a class="delete-ref" href="javascript:void(0)" data-wishlist-id="@wishlist.Id"><i class="fa-solid fa-trash-can delete"></i></a>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var interaction = await _userService.GetInteractionTypeAsync(User.Identity.Name, user.UserName);
+
+                        if (interaction == null || (InteractionType)interaction != InteractionType.Friendship)
+                        {
+                            foreach (var ownerWishlist in Model.Wishlists)
+                            {
+                                var wishlist = await _wishlistService.GetCurrentWishListAsync(ownerWishlist.WishlistId);
+
+                                if (wishlist.ModificatorType == ModificatorType.Public)
+                                {
+                                    <div class="wishlist">
+                                        <a class="wishlist-link" href="~/Wishlist/Wishlist?wishlistId=@wishlist.Id">
+                                            @wishlist.Name
+                                        </a>
+                                    </div>
+                                }
+                            }
+                        }
+                        if (interaction != null && (InteractionType)interaction == InteractionType.Friendship)
+                        {
+                            foreach (var ownerWishlist in Model.Wishlists)
+                            {
+                                var wishlist = await _wishlistService.GetCurrentWishListAsync(ownerWishlist.WishlistId);
+
+                                if (wishlist.ModificatorType == ModificatorType.Public || wishlist.ModificatorType == ModificatorType.FriendsOnly)
+                                {
+                                    <div class="wishlist">
+                                        <a class="wishlist-link" href="~/Wishlist/Wishlist?wishlistId=@wishlist.Id">
+                                            @wishlist.Name
+                                        </a>
+                                    </div>
+                                }
+                            }
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+        @{
+            if (User.Identity.Name == user.UserName)
+            {
+                <div class="center-side">
+                    <a class="add-button" href="~/Wishlist/CreateWishlist"><i class="fa-solid fa-xmark add-icon"></i></a>
+                </div>
+            }
+        }
+
+    </div>
+    <div class="right-side">
+        <div class="user-lines">
+            <div class="line"><div class="user-image"></div></div>
+            <div class="line">@user.UserName</div>
+            <div class="line">@user.Surname @user.Name</div>
+            <div class="line">
+                <div class="interacion">Friends: @Model.FriendsCount</div>
+                <div class="interacion">Blocked: @Model.BlockedUsersCount</div>
+            </div>
+            <div class="line">Wish Lists Count: @Model.WishlistsCount</div>
+            <div class="line">Gifts Count: @Model.GiftsCount</div>
+            @{
+                if (User.Identity.Name != user.UserName)
+                {
+                    var interaction = await _userService.GetInteractionTypeAsync(User.Identity.Name, user.UserName);
+
+                    if (interaction == null)
+                    {
+                        <a class="button" href="/User/MakeFriendRequest?user2name=@user.UserName">FOLLOW</a>
+                        <a class="button" href="/User/BlockUser?user1name=@user.UserName">BLOCK</a>
+                    }
+                    else
+                    {
+                        var type = (InteractionType)interaction;
+
+                        switch (type)
+                        {
+                            case InteractionType.Block2:
+                                <a class="button" href="/User/UnblockUser?username=@user.UserName">UNBLOCK</a>
+                                break;
+
+                            case InteractionType.Friendship:
+                                <a class="button" href="/User/DeleteFromFriends?username=@user.UserName">UNFOLLOW</a>
+                                break;
+
+                            case InteractionType.Request1:
+                                <a class="button" href="#"><i class="fa-solid fa-user-clock"></i></a>
+                                break;
+
+                            case InteractionType.Request2:
+                                <a class="button" href="/User/ConfirmFriend?user1name=@user.UserName"><i class="fa-solid fa-user-plus"></i></a>
+                                break;
+                        }
+                    }
                 }
             }
         </div>
-    </div>
-    <div class="center-side">
-        <a class="add-button" href="~/Wishlist/CreateWishlist"><i class="fa-solid fa-xmark add-icon"></i></a>
     </div>
 </div>
 

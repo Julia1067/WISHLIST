@@ -152,6 +152,7 @@ main {
     height: 100%;
     background: #250039;
     transition: all 0.5s;
+    z-index: 1000;
 }
 
 h1 {
@@ -162,7 +163,8 @@ h1 {
 }
 
 .sidebar ul a {
-    display: block;
+    display: flex;
+    align-items: center;
     height: 4em;
     width: 100%;
     line-height: 65px;
@@ -172,6 +174,18 @@ h1 {
     border-top: 1px solid rgba(255, 255, 255,0.1);
     border-bottom: 1px solid black;
     transition: 0.2s;
+}
+
+.count{
+    margin-left: 9em;
+    background: #d49dff;
+    color: #250039;
+    height: 2em;
+    display: flex;
+    align-items: center;
+    width: 2em;
+    justify-content: center;
+    border-radius: 1em;
 }
 
 ul {
@@ -286,6 +300,7 @@ label #cancel {
 
 .dashboard-body {
     display: flex;
+    justify-content: space-between
 }
 
 .list-header {
@@ -295,7 +310,15 @@ label #cancel {
 }
 
 .left-side {
+    display: flex;
+}
+
+.wishlists-side {
     width: 40vw;
+}
+
+.right-side{
+
 }
 
 .wishlists {
@@ -323,6 +346,7 @@ label #cancel {
     justify-content: center;
     align-items: center;
     position: fixed;
+    z-index: 1;
 }
 
 .add-button {
@@ -579,6 +603,7 @@ input[type="range"]:focus::-webkit-slider-thumb {
     display: grid;
     justify-content: center;
 }
+
 .value{
     text-align: right;
 }
@@ -751,4 +776,127 @@ h3{
     background: #d49dff;
     color: #250039;
     border-radius: 0.3em
+}
+
+option{
+    color: #250039;
+}
+
+.search-form{
+    display: flex;
+    margin-left: 5em;
+    justify-content: space-between;
+    width: 30em;
+    margin-top: 2em;
+    margin-bottom: 5em;
+}
+
+.search-input{
+    width: 25em;
+    height: 3em;
+    border-radius: 1.5em;
+    background: rgba(255, 255, 255,0.1);
+    padding-left: 0.8em;
+}
+
+.search-input::placeholder{
+    font-style:italic;
+}
+
+.search-button {
+    height: 3em;
+    width: 3em;
+    border-radius: 1.5em;
+    background: #d49dff;
+    transition: ease 0.3s;
+}
+
+.fa-magnifying-glass{
+    font-size: 1.5em;
+    color: #250039;
+}
+
+.search-button:hover{
+    background: transparent;
+    outline: 0.2em solid #909090;
+}
+
+.search-button:hover .fa-magnifying-glass{
+    color: #909090;
+}
+
+.users{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 3em;
+}
+
+.user{
+    display: flex;
+    width: 25em;
+    height: 13em;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255,0.1);
+    margin: 1em;
+    padding: 1.4em;
+    border-radius: 0.8em;
+}
+
+.inner-user-info{
+    display: flex;
+}
+
+.personal {
+    display: flex;
+    align-items: flex-start;
+    margin-left: 1em;
+    margin-top: 1em;
+}
+
+.make-friend{
+    display: none;
+}
+
+.user:hover .make-friend{
+    display: flex;
+}
+
+.fa-user-plus, .fa-square-plus, .fa-check, .fa-user-clock, .fa-user-check {
+    font-size: 1.8em;
+}
+
+.requests {
+    margin-left: 5em;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.request{
+    display: flex;
+    align-items: center;
+    width:25em;
+    background: rgba(255, 255, 255,0.1);
+    padding: 1em;
+    justify-content: center;
+    border-radius: 0.6em;
+}
+
+.request-buttons{
+    margin-left: 1em;
+}
+
+.description{
+    display: flex;
+    width: 20em;
+}
+
+.fa-plus {
+    color: #68009f;
+    margin-right: 0.5em;
+    transition: linear 0.2s;
+}
+
+.button:hover .fa-plus {
+    color: #808080;
 }

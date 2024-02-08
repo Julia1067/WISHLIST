@@ -10,7 +10,7 @@ namespace WISHLIST.Repositories.Abstract
 
         public Task<List<GiftModel>> GetAllWishlistGiftsAsync(string wishlidtId);
 
-        public Task<string> CreateGiftAsync(CreateGiftModel model);
+        public Task<string> CreateGiftAsync(CreateGiftModel model, string username);
 
         public Task<StatusModel> UpdateGiftAsync(CreateGiftModel model);
 
@@ -20,8 +20,6 @@ namespace WISHLIST.Repositories.Abstract
 
         public Task<StatusModel> SaveGiftFile(string giftId, IFormFile file);
 
-        public Task<List<ModificatorModel>> GetModificatorListAsync();
-
-        public Task<ModificatorModel> GetCurrentModificator(int modificatorId);
+        public Task<int> UserGiftsNumber(string username);
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WISHLIST.Models.Domain;
 
@@ -11,9 +12,11 @@ using WISHLIST.Models.Domain;
 namespace WISHLIST.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240201150148_InteractionModelModify2")]
+    partial class InteractionModelModify2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,9 +240,6 @@ namespace WISHLIST.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -255,7 +255,7 @@ namespace WISHLIST.Migrations
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("ModificatorType")
+                    b.Property<int>("ModificatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -269,7 +269,7 @@ namespace WISHLIST.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("ModificatorId");
 
                     b.HasIndex("WishlistId");
 
@@ -279,6 +279,9 @@ namespace WISHLIST.Migrations
             modelBuilder.Entity("WISHLIST.Models.Domain.InteractionModel", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstUsername")
@@ -292,52 +295,25 @@ namespace WISHLIST.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId");
+
                     b.ToTable("Interactions");
                 });
 
-            modelBuilder.Entity("WISHLIST.Models.Domain.OwnerGiftModel", b =>
+            modelBuilder.Entity("WISHLIST.Models.Domain.ModificatorModel", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("GiftId")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("WishlistId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GiftId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.HasIndex("WishlistId");
-
-                    b.ToTable("OwnerGifts");
-                });
-
-            modelBuilder.Entity("WISHLIST.Models.Domain.OwnerWishlistModel", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("WishlistId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.HasIndex("WishlistId");
-
-                    b.ToTable("OwnerWishlists");
+                    b.ToTable("Modificators");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
@@ -353,9 +329,6 @@ namespace WISHLIST.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ModificatorType")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -420,59 +393,32 @@ namespace WISHLIST.Migrations
 
             modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
                 {
-                    b.HasOne("WISHLIST.Models.Domain.ApplicationUser", "Author")
-                        .WithMany("AuthoredGifts")
-                        .HasForeignKey("AuthorId");
+                    b.HasOne("WISHLIST.Models.Domain.ModificatorModel", "Modificator")
+                        .WithMany()
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
                         .WithMany("Gifts")
                         .HasForeignKey("WishlistId");
 
-                    b.Navigation("Author");
+                    b.Navigation("Modificator");
 
                     b.Navigation("Wishlist");
                 });
 
-            modelBuilder.Entity("WISHLIST.Models.Domain.OwnerGiftModel", b =>
+            modelBuilder.Entity("WISHLIST.Models.Domain.InteractionModel", b =>
                 {
-                    b.HasOne("WISHLIST.Models.Domain.GiftModel", "Gift")
-                        .WithMany("Owner")
-                        .HasForeignKey("GiftId");
-
-                    b.HasOne("WISHLIST.Models.Domain.ApplicationUser", "Owner")
-                        .WithMany("OwnedGifts")
-                        .HasForeignKey("OwnerId");
-
-                    b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
-                        .WithMany()
-                        .HasForeignKey("WishlistId");
-
-                    b.Navigation("Gift");
-
-                    b.Navigation("Owner");
-
-                    b.Navigation("Wishlist");
-                });
-
-            modelBuilder.Entity("WISHLIST.Models.Domain.OwnerWishlistModel", b =>
-                {
-                    b.HasOne("WISHLIST.Models.Domain.ApplicationUser", "Owner")
-                        .WithMany("OwnedWishlists")
-                        .HasForeignKey("OwnerId");
-
-                    b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
-                        .WithMany("Owner")
-                        .HasForeignKey("WishlistId");
-
-                    b.Navigation("Owner");
-
-                    b.Navigation("Wishlist");
+                    b.HasOne("WISHLIST.Models.Domain.ApplicationUser", null)
+                        .WithMany("UserInteractions")
+                        .HasForeignKey("ApplicationUserId");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
                 {
                     b.HasOne("WISHLIST.Models.Domain.ApplicationUser", "Author")
-                        .WithMany("AuthoredWishlists")
+                        .WithMany("Wishlists")
                         .HasForeignKey("AuthorId");
 
                     b.Navigation("Author");
@@ -480,25 +426,14 @@ namespace WISHLIST.Migrations
 
             modelBuilder.Entity("WISHLIST.Models.Domain.ApplicationUser", b =>
                 {
-                    b.Navigation("AuthoredGifts");
+                    b.Navigation("UserInteractions");
 
-                    b.Navigation("AuthoredWishlists");
-
-                    b.Navigation("OwnedGifts");
-
-                    b.Navigation("OwnedWishlists");
-                });
-
-            modelBuilder.Entity("WISHLIST.Models.Domain.GiftModel", b =>
-                {
-                    b.Navigation("Owner");
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.WishlistModel", b =>
                 {
                     b.Navigation("Gifts");
-
-                    b.Navigation("Owner");
                 });
 #pragma warning restore 612, 618
         }

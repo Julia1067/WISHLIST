@@ -1,4 +1,5 @@
 ﻿@using WISHLIST.Models.DTO
+@using WISHLIST.Models.Domain
 @model CreateWishlistModel
 
 @{
@@ -17,6 +18,30 @@
                             <div class="span-message">
                                 <span asp-validation-for="Name"></span>
                             </div>
+                        </div>
+                        <div class="input-container">
+                            <select class="select" asp-for="ModificatorType" id="modificator">
+                                @{
+                                    foreach (var modificator in Enum.GetValues(typeof(ModificatorType)))
+                                    {
+                                        switch (modificator)
+                                        {
+                                            case ModificatorType.Public:
+                                                <option value="0">Public</option>
+                                                break;
+                                            case ModificatorType.FriendsOnly:
+                                                <option value="2">For friends only</option>
+                                                break;
+                                            case ModificatorType.Private:
+                                                <option value="1">Private</option>
+                                                break;
+                                            case ModificatorType.Reference:
+                                                <option value="4">With reference</option>
+                                                break;
+                                        }
+                                    }
+                                }
+                            </select>
                         </div>
                         <div class="input-container">
                             <label class="label" asp-for="Description">Description</label>

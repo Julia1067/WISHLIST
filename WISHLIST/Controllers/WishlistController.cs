@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using WISHLIST.Models.DTO;
 using WISHLIST.Repositories.Abstract;
@@ -38,7 +39,7 @@ namespace WISHLIST.Controllers
         [HttpDelete]
         public async Task DeleteWishlist(string wishlistId)
         {
-            await _wishlistService.DeleteCurrentWishlistAsync(wishlistId);
+            await _wishlistService.DeleteCurrentWishlistAsync(wishlistId, User.Identity.Name);
         }
 
         [HttpGet]
@@ -46,34 +47,74 @@ namespace WISHLIST.Controllers
         {
             var wishlist = await _wishlistService.GetCurrentWishListAsync(wishlistId);
 
-            CombineWishlistGiftModel model = new();
+            CombineWishlistGiftModel model = new()
+            {
+                CreateWishlistModel = new CreateWishlistModel
+                {
+                    Id = wishlistId,
+                    Name = wishlist.Name,
+                    Description = wishlist.Description,
+                    ModificatorType = wishlist.ModificatorType
+                },
 
-            model.CreateWishlistModel = new CreateWishlistModel();
-            
-            model.CreateWishlistModel.Id = wishlistId;
-            model.CreateWishlistModel.Name = wishlist.Name;
-            model.CreateWishlistModel.Description = wishlist.Description;
-
-            model.GiftsModel = await _giftService.GetAllWishlistGiftsAsync(wishlistId);
+                GiftsModel = await _giftService.GetAllWishlistGiftsAsync(wishlistId)
+            };
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateWishlist(CreateWishlistModel model)
+        public async Task<IActionResult> UpdateWishlist(CombineWishlistGiftModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(model.CreateWishlistModel);
             }
 
-            var status = await _wishlistService.UpdateCurrentWishlistAsync(model);
+            var status = await _wishlistService.UpdateCurrentWishlistAsync(model.CreateWishlistModel);
 
             if(status.StatusValue == false)
             {
-                return View(model);
+                return View(model.CreateWishlistModel);
             }
 
             return RedirectToAction("Dashboard", "User", new {username = User.Identity.Name});
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GlobalWishlistPage(string request)
+        {
+            if(request == null)
+            {
+                var list = await _wishlistService.GetAllWishlists(User.Identity.Name);
+
+                return View(list);
+            }
+            else
+            {
+                var list = await _wishlistService.GetWishlistByRequest(request, User.Identity.Name);
+
+                return View(list);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Wishlist(string wishlistId)
+        {
+            CombineWishlistGiftViewModel model = new()
+            {
+                Wishlist = await _wishlistService.GetCurrentWishListAsync(wishlistId),
+                Gifts = await _giftService.GetAllWishlistGiftsAsync(wishlistId)
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddExistingWishlist(string wishlistId)
+        {
+            await _wishlistService.AddExistingWishlist(User.Identity.Name, wishlistId);
+
+            return RedirectToAction("GlobalWishlistPage");
         }
     }
 }

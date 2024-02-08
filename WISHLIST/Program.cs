@@ -44,7 +44,7 @@ builder.Services
     .AddEntityFrameworkStores<DatabaseContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
 builder.Services.AddTransient<IWishlistService, WishlistService>();
 builder.Services.AddTransient<IGiftService, GiftService>();

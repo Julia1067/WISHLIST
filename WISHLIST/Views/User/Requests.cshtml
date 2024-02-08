@@ -1,0 +1,18 @@
+﻿@using WISHLIST.Models.Domain
+@model List<InteractionModel>
+
+<div class="requests">
+    @{
+        foreach (var interaction in Model)
+        {
+            <div class="request">
+                <a href="/User/Dashboard?username=@interaction.FirstUsername">@interaction.FirstUsername</a> starts to follow you
+                <div class="request-buttons">
+                    <a class="button" href="/User/ConfirmFriend?user1name=@interaction.FirstUsername">FOLLOW</a>
+                    <a class="button" href="/User/BlockUser?user1name=@interaction.FirstUsername">BLOCK</a>
+                    <a class="button" href="/User/DeleteUserFromRequests?user1name=@interaction.FirstUsername">DELETE</a>
+                </div>
+            </div>
+        }
+    }
+</div>

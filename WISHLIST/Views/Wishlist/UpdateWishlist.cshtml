@@ -1,10 +1,10 @@
 ﻿@using WISHLIST.Models.DTO
+@using WISHLIST.Models.Domain
 @using WISHLIST.Repositories.Abstract
 @model CombineWishlistGiftModel
 @inject IGiftService _giftService;
 
 @{
-    var modificators = await _giftService.GetModificatorListAsync();
 }
 
 <div class="upd-form">
@@ -19,6 +19,31 @@
                     <div class="span-message">
                         <span asp-validation-for="CreateWishlistModel.Name"></span>
                     </div>
+                </div>
+                <div class="input-container">
+                    <select class="select" asp-for="CreateWishlistModel.ModificatorType" id="modificator">
+                        @{
+                            string id = Model.CreateWishlistModel.Id;
+                            foreach (var modificator in Enum.GetValues(typeof(ModificatorType)))
+                            {
+                                switch (modificator)
+                                {
+                                    case ModificatorType.Public:
+                                        <option value="@modificator">Public</option>
+                                        break;
+                                    case ModificatorType.FriendsOnly:
+                                        <option value="@modificator">For friends only</option>
+                                        break;
+                                    case ModificatorType.Private:
+                                        <option value="@modificator">Private</option>
+                                        break;
+                                    case ModificatorType.Reference:
+                                        <option value="@modificator">With reference</option>
+                                        break;
+                                }
+                            }
+                        }
+                    </select>
                 </div>
                 <div class="input-container">
                     <label class="label" asp-for="CreateWishlistModel.Description">Description</label>
@@ -79,7 +104,20 @@
                             </div>
                             <div class="fields-divide">
                                 <p class="field-name">Modificator:</p>
-                                <p>@((await _giftService.GetCurrentModificator(gift.ModificatorId)).Name)</p>
+                                @{
+                                    switch (gift.ModificatorType)
+                                    {
+                                        case ModificatorType.Public:
+                                            <p>Public</p>
+                                            break;
+                                        case ModificatorType.FriendsOnly:
+                                            <p>For friends only</p>
+                                            break;
+                                        case ModificatorType.Private:
+                                            <p>Private</p>
+                                            break;
+                                    }
+                                }
                                 <p class="field-name">Priority:</p>
                                 <p>@gift.Priority</p>
                             </div>
@@ -165,21 +203,33 @@
                 </div>
                 <div class="gift-properties-divide">
                     <div class="input-container">
-                        <label class="label" asp-for="CreateGiftModel.ModificatorId">Modificator</label>
+                        <label class="label" asp-for="CreateGiftModel.ModificatorType">Modificator</label>
                         <div class="custom-dropdown">
                             <div>
-                                <select class="select" asp-for="CreateGiftModel.ModificatorId" id="modificator">
+                                <select class="select" asp-for="CreateGiftModel.ModificatorType" id="modificator">
                                     @{
-                                        foreach (var modificator in modificators)
+                                        foreach (var modificator in Enum.GetValues(typeof(ModificatorType)))
                                         {
-                                            <option value="@modificator.Id">@modificator.Name</option>
+                                            switch (modificator)
+                                            {
+                                                case ModificatorType.Public:
+                                                    <option value="@modificator">Public</option>
+                                                    break;
+                                                case ModificatorType.FriendsOnly:
+                                                    <option value="@modificator">For friends only</option>
+                                                    break;
+                                                case ModificatorType.Private:
+                                                    <option value="@modificator">Private</option>
+                                                    break;
+                                            }
+
                                         }
                                     }
                                 </select>
                             </div>
                         </div>
                         <div class="span-message">
-                            <span asp-validation-for="CreateGiftModel.ModificatorId"></span>
+                            <span asp-validation-for="CreateGiftModel.ModificatorType"></span>
                         </div>
                     </div>
                 </div>

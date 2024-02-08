@@ -31,16 +31,6 @@
                     </label>
                 </div>
 
-                @{
-                    if (TempData["msg"] != null)
-                    {
-                        <div class="span-message">
-                            <span>@TempData["msg"]</span>
-                        </div>
-                        TempData["msg"] = String.Empty;
-                    }
-                }
-
                 <div class="button-container">
                     <input class="button" type="submit" value="Save Image" />
                 </div>

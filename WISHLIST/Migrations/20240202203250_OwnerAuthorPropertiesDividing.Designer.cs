@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WISHLIST.Models.Domain;
 
@@ -11,9 +12,11 @@ using WISHLIST.Models.Domain;
 namespace WISHLIST.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240202203250_OwnerAuthorPropertiesDividing")]
+    partial class OwnerAuthorPropertiesDividing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,7 +258,7 @@ namespace WISHLIST.Migrations
                     b.Property<DateTime>("LastUpdateDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("ModificatorType")
+                    b.Property<int>("ModificatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -270,6 +273,8 @@ namespace WISHLIST.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("ModificatorId");
 
                     b.HasIndex("WishlistId");
 
@@ -295,6 +300,22 @@ namespace WISHLIST.Migrations
                     b.ToTable("Interactions");
                 });
 
+            modelBuilder.Entity("WISHLIST.Models.Domain.ModificatorModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Modificators");
+                });
+
             modelBuilder.Entity("WISHLIST.Models.Domain.OwnerGiftModel", b =>
                 {
                     b.Property<string>("Id")
@@ -306,16 +327,11 @@ namespace WISHLIST.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("WishlistId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("GiftId");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("WishlistId");
 
                     b.ToTable("OwnerGifts");
                 });
@@ -335,7 +351,9 @@ namespace WISHLIST.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("WishlistId");
+                    b.HasIndex("WishlistId")
+                        .IsUnique()
+                        .HasFilter("[WishlistId] IS NOT NULL");
 
                     b.ToTable("OwnerWishlists");
                 });
@@ -353,9 +371,6 @@ namespace WISHLIST.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ModificatorType")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -424,11 +439,19 @@ namespace WISHLIST.Migrations
                         .WithMany("AuthoredGifts")
                         .HasForeignKey("AuthorId");
 
+                    b.HasOne("WISHLIST.Models.Domain.ModificatorModel", "Modificator")
+                        .WithMany()
+                        .HasForeignKey("ModificatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
                         .WithMany("Gifts")
                         .HasForeignKey("WishlistId");
 
                     b.Navigation("Author");
+
+                    b.Navigation("Modificator");
 
                     b.Navigation("Wishlist");
                 });
@@ -443,15 +466,9 @@ namespace WISHLIST.Migrations
                         .WithMany("OwnedGifts")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
-                        .WithMany()
-                        .HasForeignKey("WishlistId");
-
                     b.Navigation("Gift");
 
                     b.Navigation("Owner");
-
-                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.OwnerWishlistModel", b =>
@@ -461,8 +478,8 @@ namespace WISHLIST.Migrations
                         .HasForeignKey("OwnerId");
 
                     b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
-                        .WithMany("Owner")
-                        .HasForeignKey("WishlistId");
+                        .WithOne("Owner")
+                        .HasForeignKey("WISHLIST.Models.Domain.OwnerWishlistModel", "WishlistId");
 
                     b.Navigation("Owner");
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WISHLIST.Models.Domain;
 
 namespace WISHLIST.Models.DTO
 {
@@ -21,7 +22,7 @@ namespace WISHLIST.Models.DTO
 
         public int Priority { get; set; }
 
-        public int ModificatorId { get; set; }
+        public ModificatorType ModificatorType{ get; set; }
 
         public string WishlistId { get; set;}
     }

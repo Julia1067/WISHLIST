@@ -15,8 +15,12 @@ namespace WISHLIST.Models.Domain
         [Column(TypeName = "date")]
         public DateTime CreationDate { get; set; }
 
+        public ModificatorType ModificatorType { get; set; }
+
         public List<GiftModel> Gifts { get; set; }
 
         public ApplicationUser Author { get; set; }
+
+        public List<OwnerWishlistModel> Owner { get; set; }
     }
 }

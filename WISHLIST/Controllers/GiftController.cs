@@ -15,7 +15,7 @@ namespace WISHLIST.Controllers
             {
                 return RedirectToAction("UpdateWishlist", "Wishlist", new {wishlistId = model.CreateGiftModel.WishlistId});
             }
-            var giftId = await _giftService.CreateGiftAsync(model.CreateGiftModel);
+            var giftId = await _giftService.CreateGiftAsync(model.CreateGiftModel, User.Identity.Name);
 
             if (model.CreateGiftModel.ImageFile != null)
                 await _giftService.SaveGiftFile(giftId, model.CreateGiftModel.ImageFile);
@@ -33,7 +33,7 @@ namespace WISHLIST.Controllers
                 CreateGiftModel model = new();
 
                 model.Priority = gift.Priority;
-                model.ModificatorId = gift.ModificatorId;
+                model.ModificatorType = gift.ModificatorType;
                 model.GiftUrl = gift.GiftUrl;
                 model.ImagePath = @$"/images/{gift.ImageFilePath}";
                 model.Description = gift.Description;

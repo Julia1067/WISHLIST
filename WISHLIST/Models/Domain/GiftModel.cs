@@ -19,15 +19,19 @@ namespace WISHLIST.Models.Domain
         [Column(TypeName = "bit")]
         public bool IsFullfilled { get; set; }
 
-        public int ModificatorId { get; set; }
+        public ModificatorType ModificatorType { get; set; }
 
         public string WishlistId { get; set; }
+
+        public string AuthorId { get; set; }
 
         [Column(TypeName ="date")]
         public DateTime LastUpdateDate { get; set; }
 
-        public WishlistModel Wishlist { get; set; }
+        public WishlistModel Wishlist{ get; set; }
 
-        public ModificatorModel Modificator { get; set; }
+        public ApplicationUser Author { get; set; }
+        
+        public List<OwnerGiftModel> Owner {  get; set; }
     }
 }

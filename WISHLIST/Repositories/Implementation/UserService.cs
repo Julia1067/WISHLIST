@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using System.Runtime.CompilerServices;
 using WISHLIST.Models.Domain;
@@ -96,7 +97,7 @@ namespace WISHLIST.Repositories.Implementation
 
                     if (user.ImageFilePath != "завантаження.png")
                     {
-                        string wwwrootPath = _environment.WebRootPath;
+                        var wwwrootPath = _environment.WebRootPath;
                         path = Path.Combine(wwwrootPath, "images", user.ImageFilePath);
                         File.Delete(path);
                     }
@@ -129,6 +130,367 @@ namespace WISHLIST.Repositories.Implementation
 
         }
 
+        public async Task<List<ApplicationUser>> FindUserAsync(string request, string username)
+        {
+            if (request == null)
+            {
+                return null;
+            }
+            var users = await _databaseContext.Users.ToListAsync();
 
+            var requestedUsers = new List<ApplicationUser>();
+
+            foreach (var user in users)
+            {
+                bool requestedUsername = user.UserName.Contains(request);
+                bool requestedName = user.Name.Contains(request);
+                bool requestedSurname = user.Surname.Contains(request);
+
+                var interaction = _databaseContext.Interactions
+                    .FirstOrDefault(i => i.FirstUsername == user.UserName && i.SecondUsername == username);
+
+                if (interaction == null)
+                {
+                    var interaction2 = await _databaseContext.Interactions
+                        .FirstOrDefaultAsync(i => i.FirstUsername == username && i.SecondUsername == user.UserName);
+
+                    if (interaction2 == null)
+                    {
+                        if (requestedUsername || requestedName || requestedSurname)
+                            requestedUsers.Add(user);
+                    }
+                    else
+                    {
+                        if ((requestedUsername || requestedName || requestedSurname) && interaction2.InteractionType != InteractionType.Block)
+                            requestedUsers.Add(user);
+                    }
+                }
+                else
+                {
+                    if (requestedUsername || requestedName || requestedSurname)
+                        requestedUsers.Add(user);
+                }
+            }
+            return requestedUsers;
+        }
+
+        public async Task<StatusModel> MakeFriendRequest(string user1name, string user2name)
+        {
+            StatusModel status = new();
+            try
+            {
+                var interaction = await _databaseContext.Interactions.FirstOrDefaultAsync(i => i.FirstUsername == user1name && i.SecondUsername == user2name);
+                var interaction2 = await _databaseContext.Interactions.FirstOrDefaultAsync(i => i.FirstUsername == user2name && i.SecondUsername == user1name);
+
+                if (interaction != null || interaction2 != null)
+                {
+                    status.StatusValue = false;
+                    return status;
+                }
+
+                string Id = string.Empty;
+
+                while (true)
+                {
+                    Id = RandomnId();
+
+                    var dbGift = await _databaseContext.Interactions.FirstOrDefaultAsync(w => w.Id == Id);
+
+                    if (dbGift == null)
+                    {
+                        break;
+                    }
+                }
+
+                interaction = new InteractionModel
+                {
+                    Id = Id,
+
+                    FirstUsername = user1name,
+                    SecondUsername = user2name,
+
+                    InteractionType = 0
+                };
+
+                await _databaseContext.Interactions.AddAsync(interaction);
+
+                await _databaseContext.SaveChangesAsync();
+                status.StatusValue = true;
+                return status;
+            }
+            catch (Exception ex)
+            {
+                status.StatusValue = false;
+                status.StatusMessage = ex.Message;
+                return status;
+            }
+        }
+
+        public async Task<int?> GetInteractionTypeAsync(string user1name, string user2name)
+        {
+            var interaction = await _databaseContext.Interactions
+                .FirstOrDefaultAsync(i => i.FirstUsername == user1name && i.SecondUsername == user2name);
+
+            if (interaction == null)
+            {
+                var interaction2 = await _databaseContext.Interactions
+                .FirstOrDefaultAsync(i => i.FirstUsername == user2name && i.SecondUsername == user1name);
+                if (interaction2 == null)
+                {
+                    return null;
+                }
+
+                if(interaction2.InteractionType == InteractionType.Block)
+                {
+                    return (int)InteractionType.Block2;
+                }
+                else if(interaction2.InteractionType == InteractionType.Request)
+                {
+                    return (int)InteractionType.Request2;
+                }
+
+                int type2 = (int)interaction2.InteractionType;
+                return type2;
+            }
+
+            if (interaction.InteractionType == InteractionType.Block)
+            {
+                return (int)InteractionType.Block1;
+            }
+            else if (interaction.InteractionType == InteractionType.Request)
+            {
+                return (int)InteractionType.Request1;
+            }
+
+            int type = (int)interaction.InteractionType;
+
+            return type;
+        }
+
+        public async Task<StatusModel> ConfirmFriend(string user1name, string user2name)
+        {
+            StatusModel status = new();
+            try
+            {
+                var interaction = await _databaseContext.Interactions.FirstOrDefaultAsync(i => i.FirstUsername == user1name && i.SecondUsername == user2name);
+
+                if (interaction != null && interaction.InteractionType == InteractionType.Request)
+                {
+                    interaction.InteractionType = InteractionType.Friendship;
+                    _databaseContext.Interactions.Update(interaction);
+                }
+
+                await _databaseContext.SaveChangesAsync();
+
+                status.StatusValue = true;
+                return status;
+            }
+            catch
+            {
+                status.StatusValue = false; 
+                return status;
+            }
+        }
+
+        public async Task<StatusModel> DeleteFromFriends(string user1name, string user2name)
+        {
+            StatusModel status = new();
+            try
+            {
+                var interaction = await _databaseContext.Interactions
+                .FirstOrDefaultAsync(i => i.FirstUsername == user1name && i.SecondUsername == user2name);
+
+                if (interaction == null)
+                {
+                    var interaction2 = await _databaseContext.Interactions
+                        .FirstOrDefaultAsync(i => i.FirstUsername == user2name && i.SecondUsername == user1name);
+
+                    if (interaction2 == null || interaction2.InteractionType != InteractionType.Friendship)
+                    {
+                        status.StatusValue = false; 
+                        return status;
+                    }
+
+                    interaction2.InteractionType = InteractionType.Request;
+
+                    _databaseContext.Interactions.Update(interaction2);
+                }
+                else
+                {
+                    if (interaction.InteractionType != InteractionType.Friendship)
+                    {
+                        status.StatusValue = false;
+                        return status;
+                    }
+
+                    interaction.InteractionType = InteractionType.Request;
+
+                    _databaseContext.Interactions.Update(interaction);
+                }
+
+                await _databaseContext.SaveChangesAsync();
+
+                status.StatusValue = true;
+                return status;
+            }
+            catch
+            {
+                status.StatusValue = false; 
+                return status;
+            }
+        }
+
+        public async Task<StatusModel> DeleteFromRequests(string user1name, string user2name)
+        {
+            StatusModel status = new();
+            try
+            {
+                var interaction = await _databaseContext.Interactions.FirstOrDefaultAsync(i => i.FirstUsername == user1name && i.SecondUsername == user2name);
+
+                if(interaction != null)
+                {
+                    _databaseContext.Interactions.Remove(interaction);
+
+                    await _databaseContext.SaveChangesAsync();
+                }
+
+                status.StatusValue = true;
+                return status;
+            }
+            catch
+            {
+                status.StatusValue= false;
+                return status;
+            }
+        }
+
+        public async Task<List<InteractionModel>> GetAllRequestsByUser2(string user2name)
+        {
+            var requestsList = await _databaseContext.Interactions
+                .Where(i => i.SecondUsername == user2name && i.InteractionType == InteractionType.Request)
+                .ToListAsync();
+            return requestsList;
+        }
+
+        public async Task<int> GetAllRequestsByUser2Count(string user2name)
+        {
+            var count = await _databaseContext.Interactions
+                .Where(i => i.SecondUsername == user2name && i.InteractionType == InteractionType.Request)
+                .CountAsync();
+            return count;
+        }
+
+        public async Task BlockUser(string blockedUser, string userWhoBlocks)
+        {
+            var interaction = await _databaseContext.Interactions
+                .FirstOrDefaultAsync(i => i.FirstUsername == blockedUser && i.SecondUsername == userWhoBlocks);
+
+            if (interaction == null)
+            {
+                var interaction2 = await _databaseContext.Interactions
+                .FirstOrDefaultAsync(i => i.FirstUsername == userWhoBlocks && i.SecondUsername == blockedUser);
+                if (interaction2 == null)
+                {
+                    interaction2 = new InteractionModel();
+
+                    string Id = string.Empty;
+
+                    while (true)
+                    {
+                        Id = RandomnId();
+
+                        var dbGift = await _databaseContext.Interactions.FirstOrDefaultAsync(w => w.Id == Id);
+
+                        if (dbGift == null)
+                        {
+                            break;
+                        }
+                    }
+
+                    interaction2.Id = Id;
+                    interaction2.FirstUsername = blockedUser;
+                    interaction2.SecondUsername = userWhoBlocks;
+                    interaction2.InteractionType = InteractionType.Block;
+
+                    await _databaseContext.Interactions.AddAsync(interaction2);
+                }
+                else
+                {
+                    interaction2.InteractionType = InteractionType.Block;
+
+                    _databaseContext.Interactions.Update(interaction2);
+                }
+            }
+            else
+            {
+                interaction.InteractionType = InteractionType.Block;
+
+                _databaseContext.Interactions.Update(interaction);
+            }
+
+            await _databaseContext.SaveChangesAsync();
+        }
+
+        public async Task UnblockUser(string blockedUser, string userWhoBlocks)
+        {
+            var interaction = await _databaseContext.Interactions
+                .FirstOrDefaultAsync(i => i.FirstUsername == blockedUser && i.SecondUsername == userWhoBlocks);
+
+            if(interaction != null && interaction.InteractionType == InteractionType.Block)
+            {
+                _databaseContext.Interactions.Remove(interaction);
+                
+                await _databaseContext.SaveChangesAsync();
+            }
+        }
+
+        private static string RandomnId()
+        {
+            const string elements = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+            string wishlistId = string.Empty;
+
+            Random random = new();
+
+            for (int i = 0; i < 6; i++)
+            {
+                wishlistId += elements[random.Next(0, elements.Length - 1)];
+            }
+
+            return wishlistId;
+        }
+
+        public async Task<int> FriendsCount(string username)
+        {
+            var user1pos = await _databaseContext.Interactions
+                .Where(i => i.FirstUsername == username && i.InteractionType == InteractionType.Friendship)
+                .CountAsync();
+            var user2pos = await _databaseContext.Interactions
+                .Where(i => i.SecondUsername == username && i.InteractionType == InteractionType.Friendship)
+                .CountAsync();
+
+            return user1pos + user2pos;
+        }
+
+        public async Task<int> BlockedUsersCount(string username)
+        {
+            var blocked = await _databaseContext.Interactions
+                .Where(i => i.SecondUsername == username && i.InteractionType == InteractionType.Block)
+                .CountAsync();
+
+            return blocked;
+        }
+
+        public async Task<ApplicationUser> GetUserByUsername(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            return user;
+        }
+
+        public async Task<ApplicationUser> GetUserById(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            return user;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WISHLIST.Models.Domain;
 
@@ -11,9 +12,11 @@ using WISHLIST.Models.Domain;
 namespace WISHLIST.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240203154743_ModificatorUpdate")]
+    partial class ModificatorUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -306,16 +309,11 @@ namespace WISHLIST.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("WishlistId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("GiftId");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("WishlistId");
 
                     b.ToTable("OwnerGifts");
                 });
@@ -443,15 +441,9 @@ namespace WISHLIST.Migrations
                         .WithMany("OwnedGifts")
                         .HasForeignKey("OwnerId");
 
-                    b.HasOne("WISHLIST.Models.Domain.WishlistModel", "Wishlist")
-                        .WithMany()
-                        .HasForeignKey("WishlistId");
-
                     b.Navigation("Gift");
 
                     b.Navigation("Owner");
-
-                    b.Navigation("Wishlist");
                 });
 
             modelBuilder.Entity("WISHLIST.Models.Domain.OwnerWishlistModel", b =>

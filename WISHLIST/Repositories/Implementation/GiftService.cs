@@ -7,12 +7,14 @@ using WISHLIST.Repositories.Abstract;
 namespace WISHLIST.Repositories.Implementation
 {
     public class GiftService(DatabaseContext dbContext,
-                            IWebHostEnvironment environment) : IGiftService
+                            IWebHostEnvironment environment,
+                            UserManager<ApplicationUser> userManager) : IGiftService
     {
         private readonly DatabaseContext _dbContext = dbContext;
         private readonly IWebHostEnvironment _environment = environment;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-        public async Task<string> CreateGiftAsync(CreateGiftModel model)
+        public async Task<string> CreateGiftAsync(CreateGiftModel model, string username)
         {
             var status = new StatusModel();
 
@@ -29,9 +31,22 @@ namespace WISHLIST.Repositories.Implementation
                     break;
                 }
             }
+            string Id2 = string.Empty;
+            while (true)
+            {
+                Id2 = RandomnId();
+
+                var dbGift = await _dbContext.OwnerGifts.FirstOrDefaultAsync(w => w.Id == Id2);
+
+                if (dbGift == null)
+                {
+                    break;
+                }
+            }
 
             try
             {
+                var user = await _userManager.FindByNameAsync(username);
                 GiftModel gift = new();
 
                 gift.Id = Id;
@@ -39,16 +54,25 @@ namespace WISHLIST.Repositories.Implementation
                 gift.Description = model.Description;
                 gift.ImageFilePath = "подарунок.png";
                 gift.GiftUrl = model.GiftUrl;
+                gift.AuthorId = user.Id;
                 if (model.IsFulfilled == true)
                     gift.IsFullfilled = true;
                 else
                     gift.IsFullfilled = false;
-                gift.ModificatorId = model.ModificatorId;
+                gift.ModificatorType = model.ModificatorType;
                 gift.WishlistId = model.WishlistId;
                 gift.LastUpdateDate = DateTime.Now;
                 gift.Priority = model.Priority;
 
                 await _dbContext.Gifts.AddAsync(gift);
+
+                OwnerGiftModel ownerGift = new();
+
+                ownerGift.Id = Id2;
+                ownerGift.GiftId = Id;
+                ownerGift.OwnerId = (await _userManager.FindByNameAsync(username)).Id;
+
+                await _dbContext.OwnerGifts.AddAsync(ownerGift);
 
                 await _dbContext.SaveChangesAsync();
 
@@ -115,6 +139,7 @@ namespace WISHLIST.Repositories.Implementation
                 gift.LastUpdateDate = DateTime.Now;
                 gift.GiftUrl = model.GiftUrl;
                 gift.IsFullfilled = model.IsFulfilled;
+                gift.ModificatorType = model.ModificatorType;
 
                 _dbContext.Gifts.Update(gift);
 
@@ -226,14 +251,13 @@ namespace WISHLIST.Repositories.Implementation
 
         }
 
-        public async Task<List<ModificatorModel>> GetModificatorListAsync()
+        public async Task<int> UserGiftsNumber(string username)
         {
-            return await _dbContext.Modificators.ToListAsync();
-        }
+            var user = await _userManager.FindByNameAsync(username);
 
-        public async Task<ModificatorModel> GetCurrentModificator(int modificatorId)
-        {
-            return await _dbContext.Modificators.FirstOrDefaultAsync(m => m.Id == modificatorId);
+            var giftList = await _dbContext.OwnerGifts.Where(o => o.OwnerId == user.Id).ToListAsync();
+
+            return giftList.Count;
         }
     }
 }

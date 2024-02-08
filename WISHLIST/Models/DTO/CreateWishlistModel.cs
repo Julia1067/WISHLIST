@@ -1,4 +1,6 @@
-﻿namespace WISHLIST.Models.DTO
+﻿using WISHLIST.Models.Domain;
+
+namespace WISHLIST.Models.DTO
 {
     public class CreateWishlistModel
     {
@@ -9,5 +11,7 @@
         public string Description { get; set; }
 
         public string AuthorId { get; set; }
+
+        public ModificatorType ModificatorType { get; set; }
     }
 }

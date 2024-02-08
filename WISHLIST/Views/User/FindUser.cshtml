@@ -1,0 +1,73 @@
+﻿@using WISHLIST.Models.Domain
+@using WISHLIST.Repositories.Abstract
+@model List<ApplicationUser>
+@inject IUserService _userService
+@inject IWishlistService _wishlistService
+
+@using (Html.BeginForm("FindUser", "User", FormMethod.Get))
+{
+    <div class="search-form">
+        <input class="search-input" placeholder="Search by name, surname or username..." name="request" type="text" />
+
+        <button class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+}
+
+<div class="users">
+    @{
+        if (Model != null)
+        {
+            foreach (var user in Model)
+            {
+                var correctedPath = $"/images/{user.ImageFilePath}";
+                <div class="user">
+                    <div class="user-info">
+                        <a href="/User/Dashboard?username=@user.UserName"><h4>@@@user.UserName</h4></a>
+                        <div class="inner-user-info">
+                            @{
+                                if (user.ImageFilePath == "завантаження.png")
+                                {
+                                    <div style="background: url('@Html.Raw(correctedPath)') no-repeat center center; background-size: cover; height: 8em; width: 8em; border-radius: 4em;"></div>
+                                }
+                                else
+                                {
+                                    <div style="background: url('@Html.Raw(correctedPath)') no-repeat center center; background-size: cover; height: 8em; width: 8em; border-radius: 0.5em;"></div>
+                                }
+                            }
+                            <div class="text-inform">
+                                <div class="personal">@user.Surname @user.Name</div>
+                                <div class="personal">Wish lists number: @((await _wishlistService.GetAllOwnWishlistListAsync(user.UserName)).Count)</div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (user.UserName != User.Identity.Name)
+                    {
+                        int? typeint = await _userService.GetInteractionTypeAsync(User.Identity.Name, user.UserName);
+
+                        if (typeint == null)
+                        {
+                            <a class="make-friend" href="/User/MakeFriendRequest?user2name=@user.UserName"><i class="fa-solid fa-user-plus"></i></a>
+                        }
+                        else
+                        {
+                            InteractionType type = (InteractionType)typeint;
+
+                            if (type == InteractionType.Friendship)
+                            {
+                                <a class="make-friend" href="#"><i class="fa-solid fa-user-check"></i></a>
+                            }
+                            else if (type == InteractionType.Request1)
+                            {
+                                <a class="make-friend" href="#"><i class="fa-solid fa-user-clock"></i></a>
+                            }
+                            else if (type == InteractionType.Request2)
+                            {
+                                <a class="make-friend" href="/User/ConfirmFriend?user1name=@user.UserName"><i class="fa-solid fa-user-plus"></i></a>
+                            }
+                        }
+                    }
+                </div>
+            }
+        }
+    }
+</div>

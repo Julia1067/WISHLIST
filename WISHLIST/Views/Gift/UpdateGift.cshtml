@@ -1,4 +1,5 @@
 ﻿@using WISHLIST.Models.DTO
+@using WISHLIST.Models.Domain
 @model CreateGiftModel
 @{
 }
@@ -80,6 +81,27 @@
                                     <span asp-validation-for="Priority"></span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="input-divide">
+                            <select class="select" asp-for="ModificatorType" id="modificator">
+                                @{
+                                    foreach (var modificator in Enum.GetValues(typeof(ModificatorType)))
+                                    {
+                                        switch (modificator)
+                                        {
+                                            case ModificatorType.Public:
+                                                <option value="@modificator">Public</option>
+                                                break;
+                                            case ModificatorType.FriendsOnly:
+                                                <option value="@modificator">For friends only</option>
+                                                break;
+                                            case ModificatorType.Private:
+                                                <option value="@modificator">Private</option>
+                                                break;
+                                        }
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
                     @{

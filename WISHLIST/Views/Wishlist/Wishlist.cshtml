@@ -1,0 +1,90 @@
+﻿@using WISHLIST.Models.DTO
+@using WISHLIST.Models.Domain
+@using WISHLIST.Repositories.Abstract
+@model CombineWishlistGiftViewModel
+@inject IWishlistService _wishlistService
+@inject IUserService _userService
+@{
+    WishlistModel wishlist = Model.Wishlist;
+
+    List<GiftModel> gifts = Model.Gifts;
+}
+<div class="description">
+    <div class="text-description">
+        <h2 class="wishlist-name">@wishlist.Name</h2>
+        <p class="description">@wishlist.Description</p>
+    </div>
+    @{
+        var user = await _userService.GetUserByUsername(User.Identity.Name);
+        if (user.Id != wishlist.AuthorId)
+        {
+            var owned = await _wishlistService.IsWishlistOwned(wishlist.Id, User.Identity.Name);
+
+            if (!owned)
+            {
+                <div class="add-wishlist-button">
+                    <a class="button" href="/Wishlist/AddExistingWishlist?wishlistId=@wishlist.Id"><i class="fa-solid fa-plus"></i>Add</a>
+                </div>
+            }
+        }
+    }
+</div>
+
+
+
+<div class="gifts-form">
+    @{
+        foreach (var gift in gifts)
+        {
+            <div class="gift">
+                <h3>@gift.Name</h3>
+                <div class="gift-fields">
+                    @{
+                        var correctedPath = @$"/images/{gift.ImageFilePath}";
+                    }
+                    <div style="background-image: url('@Html.Raw(correctedPath)'); background-repeat: no-repeat; border-radius: 0.5em; background-position: center center; background-size: cover; height: 15em; width: 15em; margin: 1em;"></div>
+
+                    <div class="gift-info-block">
+                        <div class="description">@gift.Description</div>
+                        <div class="fields">
+                            <div class="fields-divide">
+                                <p class="field-name">Gift URL:</p>
+                                <a class="ref" href="@gift.GiftUrl">@gift.Name</a>
+                                <p class="field-name">Is fulfilled:</p>
+                                @{
+                                    if (gift.IsFullfilled == false)
+                                    {
+                                        <p>Active</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Fulfilled</p>
+                                    }
+                                }
+                            </div>
+                            <div class="fields-divide">
+                                <p class="field-name">Modificator:</p>
+                                @{
+                                    switch (gift.ModificatorType)
+                                    {
+                                        case ModificatorType.Public:
+                                            <p>Public</p>
+                                            break;
+                                        case ModificatorType.FriendsOnly:
+                                            <p>For friends only</p>
+                                            break;
+                                        case ModificatorType.Private:
+                                            <p>Private</p>
+                                            break;
+                                    }
+                                }
+                                <p class="field-name">Priority:</p>
+                                <p>@gift.Priority</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
