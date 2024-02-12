@@ -8,11 +8,13 @@ namespace WISHLIST.Repositories.Implementation
 {
     public class GiftService(DatabaseContext dbContext,
                             IWebHostEnvironment environment,
-                            UserManager<ApplicationUser> userManager) : IGiftService
+                            UserManager<ApplicationUser> userManager,
+                            IUserService userService) : IGiftService
     {
         private readonly DatabaseContext _dbContext = dbContext;
         private readonly IWebHostEnvironment _environment = environment;
         private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IUserService _userService = userService;
 
         public async Task<string> CreateGiftAsync(CreateGiftModel model, string username)
         {
@@ -47,18 +49,19 @@ namespace WISHLIST.Repositories.Implementation
             try
             {
                 var user = await _userManager.FindByNameAsync(username);
+
                 GiftModel gift = new();
 
+                if (model.IsFulfilled == true)
+                    gift.IsFullfilled = true;
+                else
+                    gift.IsFullfilled = false;
                 gift.Id = Id;
                 gift.Name = model.Name;
                 gift.Description = model.Description;
                 gift.ImageFilePath = "подарунок.png";
                 gift.GiftUrl = model.GiftUrl;
                 gift.AuthorId = user.Id;
-                if (model.IsFulfilled == true)
-                    gift.IsFullfilled = true;
-                else
-                    gift.IsFullfilled = false;
                 gift.ModificatorType = model.ModificatorType;
                 gift.WishlistId = model.WishlistId;
                 gift.LastUpdateDate = DateTime.Now;
@@ -66,11 +69,13 @@ namespace WISHLIST.Repositories.Implementation
 
                 await _dbContext.Gifts.AddAsync(gift);
 
-                OwnerGiftModel ownerGift = new();
-
-                ownerGift.Id = Id2;
-                ownerGift.GiftId = Id;
-                ownerGift.OwnerId = (await _userManager.FindByNameAsync(username)).Id;
+                OwnerGiftModel ownerGift = new()
+                {
+                    Id = Id2,
+                    GiftId = Id,
+                    WishlistId = model.WishlistId,
+                    OwnerId = (await _userManager.FindByNameAsync(username)).Id
+                };
 
                 await _dbContext.OwnerGifts.AddAsync(ownerGift);
 
@@ -86,39 +91,77 @@ namespace WISHLIST.Repositories.Implementation
             }
         }
 
-        public async Task<StatusModel> DeleteGiftAsync(string giftId)
+        public async Task<StatusModel> DeleteGiftAsync(string giftId, string wishlistId, string username)
         {
             StatusModel status = new();
 
             try
             {
-                var gift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.Id == giftId);
+                var user = await _userManager.FindByNameAsync(username);
 
-                if (gift.ImageFilePath != "подарунок.png")
+                var ownerGift = await _dbContext.OwnerGifts.FirstOrDefaultAsync(o => o.OwnerId == user.Id && o.WishlistId == wishlistId && o.GiftId == giftId);
+
+                if (ownerGift != null)
                 {
-                    var wwwrootPath = _environment.WebRootPath;
-                    string path = Path.Combine(wwwrootPath, "images", gift.ImageFilePath);
+                    var gift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.Id == giftId);
 
-                    File.Delete(path);
+                    if (gift.AuthorId == user.Id)
+                    {
+                        if (gift.ImageFilePath != "подарунок.png")
+                        {
+                            var wwwrootPath = _environment.WebRootPath;
+                            string path = Path.Combine(wwwrootPath, "images", gift.ImageFilePath);
+
+                            File.Delete(path);
+                        }
+
+                        var ownerGifts = await _dbContext.OwnerGifts.Where(o => o.GiftId == giftId).ToListAsync();
+
+                        foreach (var item in ownerGifts)
+                        {
+                            _dbContext.OwnerGifts.Remove(item);
+                        }
+
+                        _dbContext.Gifts.Remove(gift);
+                    }
+                    else
+                    {
+                        _dbContext.OwnerGifts.Remove(ownerGift);
+                    }
+                    await _dbContext.SaveChangesAsync();
+                    status.StatusValue = true;
+                    return status;
                 }
 
-                _dbContext.Gifts.Remove(gift);
-
-                await _dbContext.SaveChangesAsync();
-                status.StatusValue = true;
+                status.StatusValue = false;
                 return status;
             }
-            catch(Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 status.StatusValue = false;
                 status.StatusMessage = ex.Message;
                 return status;
             }
         }
 
-        public async Task<List<GiftModel>> GetAllWishlistGiftsAsync(string wishlidtId)
+        public async Task<List<GiftModel>> GetAllWishlistGiftsAsync(string wishlidtId,string username)
         {
-            return await _dbContext.Gifts.Where(g => g.WishlistId == wishlidtId).ToListAsync();
+            var user = await _userManager.FindByNameAsync(username);
+
+            var ownerGifts = await _dbContext.OwnerGifts.Where(o => o.WishlistId == wishlidtId && o.OwnerId == user.Id).ToListAsync();
+
+            var gifts = new List<GiftModel>();
+
+            foreach (var ownerGift in ownerGifts)
+            {
+                var gift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.Id == ownerGift.GiftId);
+
+                if (gift != null)
+                {
+                    gifts.Add(gift);
+                }
+            }
+            return gifts;
         }
 
         public async Task<GiftModel> GetGiftAsync(string giftid)
@@ -147,7 +190,7 @@ namespace WISHLIST.Repositories.Implementation
                 status.StatusValue = true;
                 return status;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 status.StatusValue = false;
                 status.StatusMessage = ex.Message;
@@ -220,7 +263,7 @@ namespace WISHLIST.Repositories.Implementation
                     }
 
                     var gift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.Id == giftId);//user searching 
-                                                                             //in database in AspNetUsers table
+                                                                                               //in database in AspNetUsers table
 
                     if (gift.ImageFilePath != "подарунок.png")
                     {
@@ -259,6 +302,153 @@ namespace WISHLIST.Repositories.Implementation
 
             return giftList.Count;
         }
+
+        public async Task<List<GiftModel>> GetAllOwnerGifts(string attendedUsername, string username, string wishlistId)
+        {
+            var attendedUser = await _userManager.FindByNameAsync(attendedUsername);
+            var user = await _userManager.FindByNameAsync(username);
+
+            var ownerGifts = await _dbContext.OwnerGifts.Where(o => o.OwnerId == user.Id && o.WishlistId == wishlistId).ToListAsync();
+
+            var gifts = new List<GiftModel>();
+
+            if (attendedUser.Id == user.Id)
+            {
+                foreach (var ownerGift in ownerGifts)
+                {
+                    var gift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.Id == ownerGift.Id);
+
+                    gifts.Add(gift);
+                }
+            }
+            else
+            {
+                foreach (var ownerGift in ownerGifts)
+                {
+                    var gift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.Id == ownerGift.GiftId);
+
+                    var author = await _userManager.FindByIdAsync(gift.AuthorId);
+
+                    if(attendedUsername == author.UserName)
+                    {
+                        gifts.Add(gift);
+                    }
+                    else
+                    {
+                        var interaction = await _userService.GetInteractionTypeAsync(attendedUsername, author.UserName);
+
+                        if (interaction != null)
+                        {
+                            var type = (InteractionType)interaction;
+
+                            if (type == InteractionType.Block2 || type == InteractionType.Request1 || type == InteractionType.Request2)
+                            {
+                                if (gift.ModificatorType == ModificatorType.Public)
+                                {
+                                    gifts.Add(gift);
+                                }
+                            }
+                            else if (type == InteractionType.Friendship)
+                            {
+                                if (gift.ModificatorType == ModificatorType.Public || gift.ModificatorType == ModificatorType.FriendsOnly)
+                                {
+                                    gifts.Add(gift);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gift.ModificatorType == ModificatorType.Public)
+                            {
+                                gifts.Add(gift);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return gifts;
+        }
+
+        public async Task<StatusModel> AddExistingGift(string wishlistId, string username, string giftId)
+        {
+            var status = new StatusModel();
+
+            try
+            {
+                var user = await _userManager.FindByNameAsync(username);
+
+                var ownerGift = await _dbContext.OwnerGifts.FirstOrDefaultAsync(o => o.WishlistId == wishlistId && o.OwnerId == user.Id && o.GiftId == giftId);
+
+                if (ownerGift == null)
+                {
+                    ownerGift = new OwnerGiftModel();
+
+                    string Id = string.Empty;
+
+                    while (true)
+                    {
+                        Id = RandomnId();
+
+                        var dbGift = await _dbContext.Gifts.FirstOrDefaultAsync(w => w.Id == Id);
+
+                        if (dbGift == null)
+                        {
+                            break;
+                        }
+                    }
+
+                    ownerGift.Id = Id;
+                    ownerGift.OwnerId = user.Id;
+                    ownerGift.WishlistId = wishlistId;
+                    ownerGift.GiftId = giftId;
+
+                    await _dbContext.OwnerGifts.AddAsync(ownerGift);
+
+                    await _dbContext.SaveChangesAsync();
+
+                    status.StatusValue = true;
+                    return status;
+                }
+
+                status.StatusValue = false;
+                return status;
+            }
+            catch
+            {
+                status.StatusValue = false;
+                return status;
+            }
+        }
+
+        public async Task<bool> IsGiftOwned(string username, string wishlistId, string giftId)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            var ownerGift = await _dbContext.OwnerGifts.FirstOrDefaultAsync(o => o.OwnerId == user.Id && o.WishlistId == wishlistId && o.GiftId == giftId);
+
+            if (ownerGift == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> IsGiftAuthored(string username, string wishlistId, string giftId)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            var ownerGift = await _dbContext.Gifts.FirstOrDefaultAsync(g => g.AuthorId == user.Id && g.WishlistId == wishlistId && g.Id == giftId);
+
+            if (ownerGift == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
+
 

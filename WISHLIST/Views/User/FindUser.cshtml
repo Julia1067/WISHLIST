@@ -36,7 +36,7 @@
                             }
                             <div class="text-inform">
                                 <div class="personal">@user.Surname @user.Name</div>
-                                <div class="personal">Wish lists number: @((await _wishlistService.GetAllOwnWishlistListAsync(user.UserName)).Count)</div>
+                                <div class="personal">Wish lists number: @(await _wishlistService.GetWishlistCountByUser(user.UserName))</div>
                             </div>
                         </div>
                     </div>

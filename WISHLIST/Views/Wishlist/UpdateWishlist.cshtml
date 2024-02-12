@@ -5,6 +5,7 @@
 @inject IGiftService _giftService;
 
 @{
+    string id = Model.CreateWishlistModel.Id;
 }
 
 <div class="upd-form">
@@ -23,7 +24,7 @@
                 <div class="input-container">
                     <select class="select" asp-for="CreateWishlistModel.ModificatorType" id="modificator">
                         @{
-                            string id = Model.CreateWishlistModel.Id;
+                            
                             foreach (var modificator in Enum.GetValues(typeof(ModificatorType)))
                             {
                                 switch (modificator)
@@ -36,9 +37,6 @@
                                         break;
                                     case ModificatorType.Private:
                                         <option value="@modificator">Private</option>
-                                        break;
-                                    case ModificatorType.Reference:
-                                        <option value="@modificator">With reference</option>
                                         break;
                                 }
                             }
@@ -76,6 +74,7 @@
     @{
         foreach (var gift in Model.GiftsModel)
         {
+            var giftAuthored = await _giftService.IsGiftAuthored(User.Identity.Name, id, gift.Id);
             <div class="gift">
                 <h3>@gift.Name</h3>
                 <div class="gift-fields">
@@ -125,8 +124,13 @@
                     </div>
 
                     <div class="buttons">
-                        <a class="button" href="~/Gift/UpdateGift?giftId=@gift.Id">EDIT</a>
-                        <a class="delete-button" href="javascript:void(0)" data-gift-id="@gift.Id">DELETE</a>
+                        @{
+                            if (giftAuthored)
+                            {
+                                <a class="button" href="~/Gift/UpdateGift?giftId=@gift.Id">EDIT</a>
+                            }
+                        }
+                        <a class="delete-button" href="javascript:void(0)" data-gift-id="@gift.Id" data-wishlist-id="@id">DELETE</a>
                     </div>
                 </div>
             </div>
@@ -247,11 +251,12 @@
         $('.delete-button').on('click', function () {
             var deleteRef = $(this); // Store a reference to the clicked element
             var giftId = deleteRef.data('gift-id');
+            var wishlistId = deleteRef.data('wishlist-id');
 
             $.ajax({
                 url: '/Gift/DeleteGift',
                 type: 'DELETE',
-                data: { giftId: giftId },
+                data: { giftId: giftId, wishlistId: wishlistId },
                 success: function (data) {
                     // Handle success, if needed
                     console.log('Gift deleted successfully');

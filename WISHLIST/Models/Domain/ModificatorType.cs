@@ -4,7 +4,6 @@
     {
         Public,
         Private,
-        FriendsOnly,
-        Reference
+        FriendsOnly
     }
 }

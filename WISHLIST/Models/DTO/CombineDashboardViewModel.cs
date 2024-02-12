@@ -4,7 +4,7 @@ namespace WISHLIST.Models.DTO
 {
     public class CombineDashboardViewModel
     {
-        public List<OwnerWishlistModel> Wishlists { get; set; }
+        public List<WishlistModel> Wishlists { get; set; }
 
         public ApplicationUser User { get; set; }
 

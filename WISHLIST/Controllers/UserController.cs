@@ -25,24 +25,26 @@ namespace WISHLIST.Controllers
         public async Task<object> Dashboard(string username)
         {
             var interaction = await _userService.GetInteractionTypeAsync(User.Identity.Name, username);
-            
+
             if (interaction != null)
             {
                 InteractionType type = (InteractionType)interaction;
 
                 if (type == InteractionType.Block1)
+                {
                     return HttpStatusCode.NotFound;
+                }
             }
-            
+
             CombineDashboardViewModel model = new();
 
-            model.Wishlists = await _wishlistService.GetAllOwnWishlistListAsync(username);
-
-            model.WishlistsCount = model.Wishlists.Count;
+            model.Wishlists = await _wishlistService.GetAllOwnWishlistListAsync(User.Identity.Name, username);
 
             model.GiftsCount = await _giftService.UserGiftsNumber(username);
 
             model.User = await _userManager.FindByNameAsync(username);
+
+            model.WishlistsCount = await _wishlistService.GetWishlistCountByUser(model.User.UserName);
 
             model.FriendsCount = await _userService.FriendsCount(username);
 
@@ -51,10 +53,17 @@ namespace WISHLIST.Controllers
             return View(model);
         }
 
+        [Route("404")]
+        public ActionResult NotFound()
+        {
+            Response.StatusCode = 404;
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> UserInfoChange(string username)
         {
-            
+
             var user = await _userManager.FindByNameAsync(username);
 
             var correctedPath = $"/images/{user.ImageFilePath}";
@@ -84,7 +93,7 @@ namespace WISHLIST.Controllers
             if (status.StatusValue == true)
             {
                 TempData["msg"] = status.StatusMessage;
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("Dashboard", "User", new { username = User.Identity.Name });
             }
 
             TempData["msg"] = status.StatusMessage;
@@ -98,7 +107,7 @@ namespace WISHLIST.Controllers
 
             TempData["msg"] = result.StatusMessage;
 
-            return RedirectToAction("UserInfoChange", new {username = User.Identity.Name });
+            return RedirectToAction("UserInfoChange", new { username = User.Identity.Name });
         }
 
         [HttpGet]
@@ -141,7 +150,7 @@ namespace WISHLIST.Controllers
         public async Task<IActionResult> BlockUser(string user1name)
         {
             await _userService.BlockUser(user1name, User.Identity.Name);
-            return RedirectToAction("Requests") ;
+            return RedirectToAction("Requests");
         }
 
         [HttpGet]

@@ -37,63 +37,28 @@
             }
             <div class="wishlists">
                 @{
-                    
-                    if (User.Identity.Name == user.UserName)
+                    foreach(var wishlist in Model.Wishlists)
                     {
-                        foreach (var ownerWishlist in Model.Wishlists)
+                        if (wishlist.AuthorId == user.Id)
                         {
-                            var wishlist = await _wishlistService.GetCurrentWishListAsync(ownerWishlist.WishlistId);
-
-                            if (user.Id == wishlist.AuthorId)
-                            {
-                                <div class="wishlist">
-                                    <a class="wishlist-link" href="~/Wishlist/UpdateWishlist?wishlistId=@wishlist.Id">
-                                        @wishlist.Name
-                                        <div class="wishlist-actions">
-                                            <a class="delete-ref" href="javascript:void(0)" data-wishlist-id="@wishlist.Id"><i class="fa-solid fa-trash-can delete"></i></a>
-                                        </div>
-                                    </a>
-                                </div>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var interaction = await _userService.GetInteractionTypeAsync(User.Identity.Name, user.UserName);
-
-                        if (interaction == null || (InteractionType)interaction != InteractionType.Friendship)
-                        {
-                            foreach (var ownerWishlist in Model.Wishlists)
-                            {
-                                var wishlist = await _wishlistService.GetCurrentWishListAsync(ownerWishlist.WishlistId);
-
-                                if (wishlist.ModificatorType == ModificatorType.Public)
-                                {
-                                    <div class="wishlist">
-                                        <a class="wishlist-link" href="~/Wishlist/Wishlist?wishlistId=@wishlist.Id">
-                                            @wishlist.Name
-                                        </a>
+                            <div class="wishlist">
+                                <a class="wishlist-link" href="~/Wishlist/UpdateWishlist?wishlistId=@wishlist.Id">
+                                    @wishlist.Name
+                                    <div class="wishlist-actions">
+                                        <a class="delete-ref" href="javascript:void(0)" data-wishlist-id="@wishlist.Id"><i class="fa-solid fa-trash-can delete"></i></a>
                                     </div>
-                                }
-                            }
+                                </a>
+                            </div>
                         }
-                        if (interaction != null && (InteractionType)interaction == InteractionType.Friendship)
+                        else
                         {
-                            foreach (var ownerWishlist in Model.Wishlists)
-                            {
-                                var wishlist = await _wishlistService.GetCurrentWishListAsync(ownerWishlist.WishlistId);
-
-                                if (wishlist.ModificatorType == ModificatorType.Public || wishlist.ModificatorType == ModificatorType.FriendsOnly)
-                                {
-                                    <div class="wishlist">
-                                        <a class="wishlist-link" href="~/Wishlist/Wishlist?wishlistId=@wishlist.Id">
-                                            @wishlist.Name
-                                        </a>
-                                    </div>
-                                }
-                            }
+                            var author = await _userService.GetUserById(wishlist.AuthorId);
+                            <div class="wishlist">
+                                <a class="wishlist-link" href="~/Wishlist/Wishlist?wishlistId=@wishlist.Id&username=@author.UserName">
+                                    @wishlist.Name
+                                </a>
+                            </div>
                         }
-
                     }
                 }
             </div>

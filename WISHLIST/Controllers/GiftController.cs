@@ -69,9 +69,17 @@ namespace WISHLIST.Controllers
         }
 
         [HttpDelete]
-        public async Task DeleteGift(string giftId)
+        public async Task DeleteGift(string giftId, string wishlistId)
         {
-            await _giftService?.DeleteGiftAsync(giftId);
+            await _giftService?.DeleteGiftAsync(giftId, wishlistId, User.Identity.Name);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddExistingGift(string wishlistId, string giftId)
+        {
+            await _giftService.AddExistingGift(wishlistId, User.Identity.Name, giftId);
+
+            return RedirectToAction("UpdateWishlist", "Wishlist", new { wishlistId = wishlistId });
         }
     }
 }

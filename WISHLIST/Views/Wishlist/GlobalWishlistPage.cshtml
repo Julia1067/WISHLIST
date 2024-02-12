@@ -27,7 +27,7 @@
                         if (user.Id != wishlist.AuthorId)
                         {
                             <div class="text-inform">
-                                <a href="/Wishlist/Wishlist?wishlistId=@wishlist.Id"><h4>@wishlist.Name</h4></a>
+                                <a href="/Wishlist/Wishlist?wishlistId=@wishlist.Id&username=@user.UserName"><h4>@wishlist.Name</h4></a>
                                 <div class="personal">Author: @@@user2.UserName</div>
                             </div>
                             var owned = await _wishlistService.IsWishlistOwned(wishlist.Id, User.Identity.Name);

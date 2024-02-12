@@ -6,6 +6,8 @@ namespace WISHLIST.Models.DTO
     {
         public WishlistModel Wishlist { get; set; }
 
+        public List<WishlistModel> AuthoredWishlists { get; set; }
+
         public List<GiftModel> Gifts { get; set; }
     }
 }

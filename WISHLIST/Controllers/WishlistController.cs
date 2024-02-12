@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using WISHLIST.Models.DTO;
 using WISHLIST.Repositories.Abstract;
 
@@ -8,10 +9,12 @@ namespace WISHLIST.Controllers
 {
     [Authorize(Roles = "user")]
     public class WishlistController(IWishlistService wishlistService,
-                                    IGiftService giftService) : Controller
+                                    IGiftService giftService,
+                                    IUserService userService) : Controller
     {
         private readonly IWishlistService _wishlistService = wishlistService;
         private readonly IGiftService _giftService = giftService;
+        private readonly IUserService _userService = userService;
 
         [HttpGet]
         public IActionResult CreateWishlist()
@@ -43,23 +46,32 @@ namespace WISHLIST.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateWishlist(string wishlistId)
+        public async Task<object> UpdateWishlist(string wishlistId)
         {
             var wishlist = await _wishlistService.GetCurrentWishListAsync(wishlistId);
 
-            CombineWishlistGiftModel model = new()
-            {
-                CreateWishlistModel = new CreateWishlistModel
-                {
-                    Id = wishlistId,
-                    Name = wishlist.Name,
-                    Description = wishlist.Description,
-                    ModificatorType = wishlist.ModificatorType
-                },
+            var user = await _userService.GetUserById(wishlist.AuthorId);
 
-                GiftsModel = await _giftService.GetAllWishlistGiftsAsync(wishlistId)
-            };
-            return View(model);
+            if(User.Identity.Name == user.UserName)
+            {
+                CombineWishlistGiftModel model = new()
+                {
+                    CreateWishlistModel = new CreateWishlistModel
+                    {
+                        Id = wishlistId,
+                        Name = wishlist.Name,
+                        Description = wishlist.Description,
+                        ModificatorType = wishlist.ModificatorType
+                    },
+
+                    GiftsModel = await _giftService.GetAllWishlistGiftsAsync(wishlistId, User.Identity.Name)
+                };
+                return View(model);
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
         }
 
         [HttpPost]
@@ -98,12 +110,13 @@ namespace WISHLIST.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Wishlist(string wishlistId)
+        public async Task<IActionResult> Wishlist(string wishlistId, string username)
         {
             CombineWishlistGiftViewModel model = new()
             {
                 Wishlist = await _wishlistService.GetCurrentWishListAsync(wishlistId),
-                Gifts = await _giftService.GetAllWishlistGiftsAsync(wishlistId)
+                Gifts = await _giftService.GetAllOwnerGifts(User.Identity.Name, username, wishlistId),
+                AuthoredWishlists = await _wishlistService.GetAllAuthoredWishlists(User.Identity.Name)
             };
 
             return View(model);

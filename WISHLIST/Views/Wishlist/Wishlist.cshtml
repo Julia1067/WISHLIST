@@ -1,5 +1,5 @@
-﻿@using WISHLIST.Models.DTO
-@using WISHLIST.Models.Domain
+﻿@using WISHLIST.Models.Domain
+@using WISHLIST.Models.DTO
 @using WISHLIST.Repositories.Abstract
 @model CombineWishlistGiftViewModel
 @inject IWishlistService _wishlistService
@@ -81,6 +81,17 @@
                                 <p class="field-name">Priority:</p>
                                 <p>@gift.Priority</p>
                             </div>
+                            <div class="dropdown">
+                                <button onclick="myFunction()" class="dropbtn">Dropdown</button>
+                                <div id="myDropdown" class="dropdown-content">
+                                    @{
+                                        foreach (var authoredWishlist in Model.AuthoredWishlists)
+                                        {
+                                            <a href="/Gift/AddExistingGift?wishlistId=@authoredWishlist.Id&giftId=@gift.Id">@authoredWishlist.Name</a>
+                                        }
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -88,3 +99,25 @@
         }
     }
 </div>
+
+@section scripts{
+    <script>
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown menu if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+}
