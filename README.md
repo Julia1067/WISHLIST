@@ -23,3 +23,5 @@ WISHLIST web application is able to execute next features:
 ![image](https://github.com/Julia1067/WISHLIST/assets/96738585/b3e24e29-f712-4bb2-bfcc-06971b76e604)
 ![image](https://github.com/Julia1067/WISHLIST/assets/96738585/41c9b826-111a-4c3a-8a76-1757e2c316c0)
 ![image](https://github.com/Julia1067/WISHLIST/assets/96738585/f7aa5406-2c8b-4a34-8b06-c2e391d4445b)
+![image](https://github.com/Julia1067/WISHLIST/assets/96738585/eeb8c267-b3d1-4dd2-b163-c09b6e24b694)
+![image](https://github.com/Julia1067/WISHLIST/assets/96738585/87aa07ce-f465-4c05-9dce-a14399000b53)
